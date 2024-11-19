@@ -53,7 +53,7 @@ services:
     networks:
       - sw-ing
     ports:
-      - 8080:80  # API Web: http://localhost:8080
+      - 8083:80  # API Web: http://localhost:8080
     depends_on:
       - api-php
 
