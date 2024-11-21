@@ -86,10 +86,11 @@ services:
     volumes:
       - ./frontend:/usr/src/frontend
       - /usr/src/frontend/node_modules
-    networks:
-      - sw-ing
     ports:
       - 3002:3000  # Frontend (port 3000): http://localhost:3002
+    command: npm run dev
+    networks:
+      - sw-ing
 
   # phpMyAdmin
   phpmyadmin:
