@@ -15,10 +15,6 @@ export default defineConfig({
       usePolling: true,
     },
     strictPort: true,
-    hmr: {
-      host: 'localhost',
-      port: 3001,
-    },
   },
   resolve: {
     alias: {
