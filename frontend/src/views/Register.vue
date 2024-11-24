@@ -1,25 +1,35 @@
 <template>
-    <div>
-      <h1>Register</h1>
+  <div class="register-container">
+    <div class="register-box">
+      <img class="logo" src="@/assets/logo.png" alt="Econf Logo" />
       <form @submit.prevent="handleRegister">
-        <input v-model="name" placeholder="Name" type="text" required />
-        <input v-model="email" placeholder="Email" type="email" required />
-        <input v-model="password" placeholder="Password" type="password" required />
-        <input v-model="passwordConfirmation" placeholder="Confirm Password" type="password" required />
-        <button type="submit">Register</button>
+        <input v-model="name" placeholder="Meno" type="text" class="input" />
+        <input v-model="surname" placeholder="Priezvisko" type="text" class="input" />
+        <input v-model="email" placeholder="Email" type="email" class="input" />
+        <input v-model="password" placeholder="Heslo" type="password" class="input" />
+        <input v-model="passwordConfirmation" placeholder="Heslo este raz" type="password" class="input" />
+        <RouterLink to="/">
+          <button type="submit" class="btn">Registracia</button>
+        </RouterLink>
+        <RouterLink to="/login">
+          <button @click="goToLogin" class="btn-login">Spät na prihlasovanie</button>
+        </RouterLink>
       </form>
-      <p v-if="errorMessage">{{ errorMessage }}</p>
-      <p v-if="successMessage">{{ successMessage }}</p>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
+  </div>
 </template>
-
+  
 <script>
 import { ref } from "vue";
-import axios from "../api/axiosInstance"; // Adjust the path to your Axios instance
+import axios from "../api/axiosInstance";
+import "@/styles/RegisterPage.css";
+import { RouterLink } from "vue-router";
 
 export default {
   setup() {
     const name = ref("");
+    const surname = ref("");
     const email = ref("");
     const password = ref("");
     const passwordConfirmation = ref("");
@@ -31,6 +41,7 @@ export default {
         // Send registration data to the backend
         await axios.post("/register", {
           name: name.value,
+          surname: surname.value,
           email: email.value,
           password: password.value,
           password_confirmation: passwordConfirmation.value,
@@ -42,6 +53,7 @@ export default {
 
         // Reset the form fields
         name.value = "";
+        surname.value = "";
         email.value = "";
         password.value = "";
         passwordConfirmation.value = "";
