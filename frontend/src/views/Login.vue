@@ -5,9 +5,7 @@
       <form @submit.prevent="handleLogin">
         <input v-model="email" placeholder="Email" type="email" class="input" />
         <input v-model="password" placeholder="Heslo" type="password" class="input" />
-        <RouterLink to="/">
           <button type="submit" class="btn">Prihlasovanie</button>
-        </RouterLink>
         <RouterLink to="/register">
         <button @click="goToRegister" class="btn-register">Registrácia</button>
         </RouterLink>
