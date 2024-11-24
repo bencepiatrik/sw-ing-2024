@@ -8,9 +8,7 @@
         <input v-model="email" placeholder="Email" type="email" class="input" />
         <input v-model="password" placeholder="Heslo" type="password" class="input" />
         <input v-model="passwordConfirmation" placeholder="Heslo este raz" type="password" class="input" />
-        <RouterLink to="/">
-          <button type="submit" class="btn">Registracia</button>
-        </RouterLink>
+        <button type="submit" class="btn">Registracia</button>
         <RouterLink to="/login">
           <button @click="goToLogin" class="btn-login">Spät na prihlasovanie</button>
         </RouterLink>
@@ -19,7 +17,7 @@
     </div>
   </div>
 </template>
-  
+
 <script>
 import { ref } from "vue";
 import axios from "../api/axiosInstance";
@@ -68,6 +66,7 @@ export default {
 
     return {
       name,
+      surname,
       email,
       password,
       passwordConfirmation,
