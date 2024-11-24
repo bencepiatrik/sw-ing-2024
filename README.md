@@ -15,3 +15,5 @@
 ### Dárius Pintér
 <img align='left' src="https://i.pinimg.com/originals/78/0a/97/780a9764b3c8e5ec181fe7c27e5921df.png" width="200">
 
+## Links
+https://www.figma.com/design/4TgdutlqQR2SpUYsHklptM/SI-Econf?node-id=1-2&node-type=frame&t=VO6pRGvOLcDMveBy-0
