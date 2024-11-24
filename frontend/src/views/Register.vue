@@ -12,7 +12,7 @@
       <p v-if="successMessage">{{ successMessage }}</p>
     </div>
 </template>
-  
+
 <script>
 import { ref } from "vue";
 import axios from "../api/axiosInstance"; // Adjust the path to your Axios instance
@@ -47,6 +47,7 @@ export default {
         passwordConfirmation.value = "";
       } catch (error) {
         // Handle errors
+        console.error(error);
         errorMessage.value =
           error.response?.data?.message || "Registration failed. Please try again.";
         successMessage.value = ""; // Clear any previous success messages
@@ -65,4 +66,3 @@ export default {
   },
 };
 </script>
-  
