@@ -32,7 +32,7 @@ export default {
       try {
         await authStore.login(email.value, password.value);
         errorMessage.value = "";
-        window.location.href = "/dashboard"; // Redirect after login
+        window.location.href = "/main"; // Redirect after login
       } catch (error) {
         errorMessage.value = error.response?.data?.message || "Login failed. Please try again.";
       } finally {
