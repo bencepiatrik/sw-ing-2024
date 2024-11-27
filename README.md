@@ -1,5 +1,9 @@
 # sw-ing-2024
-## Software Engineering Project
+## Software Engineering Project Code Repository
+
+Welcome to the codebase of our ambitious project! Here lies the heart of all our hard work and brilliance. 
+
+**Navigate the branches wisely and bravely**
 ## Links
 
 [![Figma](https://img.shields.io/badge/Figma-Design-blue?style=for-the-badge)](https://www.figma.com/design/4TgdutlqQR2SpUYsHklptM/SI-Econf?node-id=1-2&node-type=frame&t=VO6pRGvOLcDMveBy-0)
