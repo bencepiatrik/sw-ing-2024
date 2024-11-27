@@ -9,6 +9,10 @@ Welcome to the codebase of our ambitious project! Here lies the heart of all our
 [![Figma](https://img.shields.io/badge/Figma-Design-blue?style=for-the-badge)](https://www.figma.com/design/4TgdutlqQR2SpUYsHklptM/SI-Econf?node-id=1-2&node-type=frame&t=VO6pRGvOLcDMveBy-0)
 [![Admin Repo](https://img.shields.io/badge/Admin-Repository-green?style=for-the-badge)](https://github.com/bencepiatrik/sw-ing-2024-administration)
 
+## Gitflow Branching Strategy
+
+![Gitflow Branching Strategy](https://tiagosampaio.com/wp-content/uploads/2024/01/git-flow-branching-strategy.webp)
+
 
 ## Meet the team
 
