@@ -11,8 +11,20 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
+    protected function tokensMatch($request)
+    {
+        $tokenFromRequest = $this->getTokenFromRequest($request);
+        $tokenFromSession = $request->session()->token();
+
+        \Log::info('CSRF Token from Request: ' . $tokenFromRequest);
+        \Log::info('CSRF Token from Session: ' . $tokenFromSession);
+
+        return parent::tokensMatch($request);
+    }
+
+
     protected $except = [
-        'register',
-        'login'
+    //    'register',
+    //    'login'
     ];
 }

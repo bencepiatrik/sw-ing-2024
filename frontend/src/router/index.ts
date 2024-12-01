@@ -6,6 +6,7 @@ import Register from "../views/Register.vue"; // Import the Register component
 import MainPage from "../views/MainPage.vue";
 
 
+
 const routes = [
   {
     path: "/",
@@ -33,7 +34,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
-
 
 export default router;

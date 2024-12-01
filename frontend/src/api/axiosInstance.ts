@@ -1,15 +1,21 @@
-import axios from "axios";
+import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8083", // Laravel base URL
-  withCredentials: true, // Needed for Sanctum
+  baseURL: 'http://localhost:8083', // Replace with your backend URL
+  withCredentials: true, // Ensure cookies are sent
 });
 
-// Fetch CSRF token before making requests
-axiosInstance.interceptors.request.use(async (config) => {
-  if (!document.cookie.includes('XSRF-TOKEN')) {
-    await axiosInstance.get('/sanctum/csrf-cookie'); // Retrieve CSRF cookie
+// Automatically include CSRF token in headers
+axiosInstance.interceptors.request.use((config) => {
+  const csrfToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN'))
+    ?.split('=')[1];
+
+  if (csrfToken) {
+    config.headers['X-XSRF-TOKEN'] = decodeURIComponent(csrfToken);
   }
+
   return config;
 });
 

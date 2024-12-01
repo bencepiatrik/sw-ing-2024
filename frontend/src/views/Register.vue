@@ -8,11 +8,10 @@
         <input v-model="email" placeholder="Email" type="email" class="input" />
         <input v-model="password" placeholder="Heslo" type="password" class="input" />
         <input v-model="passwordConfirmation" placeholder="Heslo este raz" type="password" class="input" />
-        <button type="submit" class="btn">Registracia</button>
-        <RouterLink to="/login">
-          <button @click="goToLogin" class="btn-login">Spät na prihlasovanie</button>
-        </RouterLink>
+        <button type="submit" class="btn">Registrácia</button>
       </form>
+      <RouterLink to="/login" class="btn-login">Späť na prihlasovanie</RouterLink>
+      <p v-if="successMessage" class="success">{{ successMessage }}</p>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
   </div>
@@ -36,8 +35,14 @@ export default {
 
     const handleRegister = async () => {
       try {
+        // Fetch CSRF token first
+        await axios.get('/sanctum/csrf-cookie',
+          {
+            withCredentials:true,
+          });
+
         // Send registration data to the backend
-        await axios.post("/register", {
+        await axios.post('/register', {
           name: name.value,
           surname: surname.value,
           email: email.value,
@@ -63,6 +68,7 @@ export default {
         successMessage.value = ""; // Clear any previous success messages
       }
     };
+
 
     return {
       name,
