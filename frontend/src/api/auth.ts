@@ -12,14 +12,13 @@ export const register = async (data: {
   return response.data;
 };
 
-import axios from './axiosInstance';
-
 export const login = async (email: string, password: string) => {
   // Fetch CSRF token first
-  await axios.get('/sanctum/csrf-cookie');
+  await axiosInstance.get('/sanctum/csrf-cookie');
 
   // Send login request
-  const response = await axios.post('/login', { email, password });
+  const response = await axiosInstance.post('/login', { email, password });
+
   return response.data;
 };
 

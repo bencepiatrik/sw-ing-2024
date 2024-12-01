@@ -20,14 +20,3 @@ use App\Http\Controllers\Auth\LoginController;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::post('/register', [RegisteredUserController::class, 'store']);
-
-Route::post('/login', [LoginController::class, 'login']);
-
-Route::post('/logout', function (Request $request) {
-    $request->user()->tokens()->delete();
-    return response()->json(['message' => 'Logged out successfully']);
-})->middleware('auth:sanctum');
-
-
