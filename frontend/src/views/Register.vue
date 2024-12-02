@@ -42,16 +42,16 @@ export default {
           });
 
         // Send registration data to the backend
-        await axios.post('/register', {
+        const response = await axios.post('/register', {
           name: name.value,
           surname: surname.value,
           email: email.value,
           password: password.value,
           password_confirmation: passwordConfirmation.value,
-        });
+        })
 
         // Show success message
-        successMessage.value = "Registration successful! You can now log in.";
+        successMessage.value = response.data.message || "Registration successful! You can now log in.";
         errorMessage.value = ""; // Clear any previous error messages
 
         // Reset the form fields

@@ -19,6 +19,7 @@
 import { ref } from "vue";
 import { useAuthStore } from "../stores/authStore";
 import "@/styles/LoginPage.css";
+import router from "@/router/index.ts";
 
 export default {
   setup() {
@@ -38,8 +39,9 @@ export default {
       try {
         await authStore.login(email.value, password.value);
         errorMessage.value = "";
-        window.location.href = "/main"; // Redirect after login
+        router.push("/main");
       } catch (error) {
+        console.log(error)
         errorMessage.value = error.response?.data?.message || "Login failed. Please try again.";
       } finally {
         isLoading.value = false;

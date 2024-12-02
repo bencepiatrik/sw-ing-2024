@@ -18,4 +18,9 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+Route::get('/main', function () {
+    return response()->json(['message' => 'Welcome to the main page.']);
+})->middleware(['auth']);
+
+
 require __DIR__.'/auth.php';

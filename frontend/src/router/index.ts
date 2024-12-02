@@ -5,8 +5,6 @@ import Login from '../views/Login.vue';
 import Register from "../views/Register.vue"; // Import the Register component
 import MainPage from "../views/MainPage.vue";
 
-
-
 const routes = [
   {
     path: "/",
@@ -27,6 +25,7 @@ const routes = [
     path: "/main",
     name: "MainPage",
     component: MainPage,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -34,5 +33,13 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
+/*
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({ name: "Login" }); // Redirect to login if not authenticated
+  } else {
+    next(); // Proceed to the route
+  }
+});*/
 export default router;
