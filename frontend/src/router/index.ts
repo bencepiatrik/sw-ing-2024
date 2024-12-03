@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from '@/stores/authStore';
 import Landing from "../views/Landing.vue";
 import Login from '../views/Login.vue';
 import Register from "../views/Register.vue"; // Import the Register component
 import MainPage from "../views/MainPage.vue";
+import ProfilePage from "../views/Profile.vue";
 
 const routes = [
   {
@@ -25,6 +26,12 @@ const routes = [
     path: "/main",
     name: "MainPage",
     component: MainPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: ProfilePage,
     meta: { requiresAuth: true },
   },
 ];
