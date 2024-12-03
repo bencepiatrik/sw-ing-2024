@@ -1,20 +1,75 @@
 <template>
-  <div class="register-container">
-    <div class="register-box">
-      <img class="logo" src="@/assets/logo.png" alt="Econf Logo" />
-      <form @submit.prevent="handleRegister">
-        <input v-model="name" placeholder="Meno" type="text" class="input" />
-        <input v-model="surname" placeholder="Priezvisko" type="text" class="input" />
-        <input v-model="email" placeholder="Email" type="email" class="input" />
-        <input v-model="password" placeholder="Heslo" type="password" class="input" />
-        <input v-model="passwordConfirmation" placeholder="Heslo este raz" type="password" class="input" />
-        <button type="submit" class="btn">Registrácia</button>
-      </form>
-      <RouterLink to="/login" class="btn-login">Späť na prihlasovanie</RouterLink>
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    </div>
-  </div>
+  <v-container class="d-flex justify-center align-center" style="height: 70vh;">
+    <v-card elevation="4" class="pa-4" width="350"> <!-- Reduced width and padding -->
+      <v-img src="@/assets/logo.png" alt="Econf Logo" class="mb-4" max-height="100"></v-img>
+      <v-form @submit.prevent="handleRegister">
+        <v-text-field
+          v-model="name"
+          label="Meno"
+          type="text"
+          outlined
+          required
+          class="mb-1"
+        ></v-text-field>
+        <v-text-field
+          v-model="surname"
+          label="Priezvisko"
+          type="text"
+          outlined
+          required
+          class="mb-1"
+        ></v-text-field>
+        <v-text-field
+          v-model="email"
+          label="Email"
+          type="email"
+          outlined
+          required
+          class="mb-1"
+        ></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Heslo"
+          type="password"
+          outlined
+          required
+          class="mb-1"
+        ></v-text-field>
+        <v-text-field
+          v-model="passwordConfirmation"
+          label="Heslo ešte raz"
+          type="password"
+          outlined
+          required
+          class="mb-1"
+        ></v-text-field>
+        <v-btn
+          color="primary"
+          block
+          large
+          type="submit"
+          class="mb-1"
+        >
+          Registrácia
+        </v-btn>
+      </v-form>
+      <RouterLink to="/login">
+        <v-btn
+          color="secondary"
+          block
+          outlined
+        >
+          Späť na prihlasovanie
+        </v-btn>
+      </RouterLink>
+      <v-alert v-if="successMessage" type="success" class="mt-2">
+        {{ successMessage }}
+      </v-alert>
+      <v-alert v-if="errorMessage" type="error" class="mt-2">
+        {{ errorMessage }}
+      </v-alert>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -36,10 +91,7 @@ export default {
     const handleRegister = async () => {
       try {
         // Fetch CSRF token first
-        await axios.get('/sanctum/csrf-cookie',
-          {
-            withCredentials:true,
-          });
+        await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 
         // Send registration data to the backend
         const response = await axios.post('/register', {
@@ -48,7 +100,7 @@ export default {
           email: email.value,
           password: password.value,
           password_confirmation: passwordConfirmation.value,
-        })
+        });
 
         // Show success message
         successMessage.value = response.data.message || "Registration successful! You can now log in.";
@@ -68,7 +120,6 @@ export default {
         successMessage.value = ""; // Clear any previous success messages
       }
     };
-
 
     return {
       name,
