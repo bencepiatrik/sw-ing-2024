@@ -9,7 +9,7 @@
 
 .app-container {
   background-color: rgb(44, 102, 144); 
-  height: 100vh; 
+  height: 100vh;
   margin: 0;
   padding: 0;
 }
@@ -35,8 +35,8 @@ a
   }
 
   #app {
-    /*display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;*/
+    padding-top: 40px;
+    display: grid;
+    width: 1900vh;
   }
 }
