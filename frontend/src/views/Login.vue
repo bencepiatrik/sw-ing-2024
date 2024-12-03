@@ -20,6 +20,7 @@ import { ref } from "vue";
 import { useAuthStore } from "../stores/authStore";
 import "@/styles/LoginPage.css";
 import router from "@/router/index.ts";
+import axiosInstance from "@/api/axiosInstance.ts";
 
 export default {
   setup() {
@@ -37,7 +38,9 @@ export default {
 
       isLoading.value = true;
       try {
+
         await authStore.login(email.value, password.value);
+       // console.log(response);
         errorMessage.value = "";
         router.push("/main");
       } catch (error) {
@@ -46,6 +49,10 @@ export default {
       } finally {
         isLoading.value = false;
       }
+      // implemented in AuthenticatedSessionController.php
+      //const response = await axiosInstance.get('/api/user');
+      //console.log(response)
+      //await axiosInstance.get('asd');
     };
 
     return {

@@ -33,6 +33,24 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  // If user is authenticated and trying to access guest-only pages
+  if (authStore.isAuthenticated && ['/login', '/register', '/'].includes(to.path)) {
+    next('/main'); // Redirect to main page
+  }
+
+  // If the route requires authentication and the user is not logged in
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/'); // Redirect to login page
+  }
+
+  next(); // Allow navigation otherwise
+});
+
+
 /*
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();

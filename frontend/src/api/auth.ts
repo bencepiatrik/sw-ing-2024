@@ -18,7 +18,7 @@ export const login = async (email: string, password: string) => {
 
   // Send login request
   const response = await axiosInstance.post('/login', { email, password });
-
+  console.log(response.data)
   return response.data;
 };
 
@@ -26,7 +26,7 @@ export const login = async (email: string, password: string) => {
 export async function logout() {
   try {
     await axiosInstance.post('/logout');
-    localStorage.removeItem('auth_token'); // Remove token
+    //localStorage.removeItem('auth_token'); // Remove token
   } catch (error: any) {
     console.error('Logout failed:', error.response?.data || error.message);
     throw error;
