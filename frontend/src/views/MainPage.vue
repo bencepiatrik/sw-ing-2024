@@ -3,6 +3,7 @@
     <nav>
       <ul>
         <li><a href="/">Landing</a></li>
+        <li><a href="/profile">Profile</a></li>
         <li><a href="#" @click="handleLogout">Logout</a></li>
       </ul>
     </nav>
