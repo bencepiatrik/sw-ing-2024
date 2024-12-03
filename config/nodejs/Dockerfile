@@ -4,6 +4,7 @@ FROM node:18.14.2-alpine3.17 AS builder-stage
 # Set working directory
 WORKDIR /usr/src/frontend
 
+#
 # Ensure node_modules directory has correct permissions
 RUN mkdir -p node_modules && chmod -R 777 node_modules
 
