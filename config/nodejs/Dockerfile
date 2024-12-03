@@ -1,20 +1,38 @@
-FROM node:18.14.2-alpine3.17 as builder-stage
+# Stage 1: Builder Stage
+FROM node:18.14.2-alpine3.17 AS builder-stage
 
+# Set working directory
 WORKDIR /usr/src/frontend
-RUN mkdir /usr/src/frontend/node_modules
-RUN chmod -R 777 /usr/src/frontend/node_modules
 
+# Ensure node_modules directory has correct permissions
+RUN mkdir -p node_modules && chmod -R 777 node_modules
+
+# Copy package.json and package-lock.json for dependency installation
 COPY ./frontend/package*.json ./
+
+# Install dependencies
 RUN npm install
 
-
-FROM node:16.3.0-alpine
-USER node
-
-WORKDIR /usr/src/frontend
-COPY --chown=node:node --from=builder-stage /usr/src/frontend/node_modules ./node_modules
-RUN chmod -R 777 /usr/src/frontend/node_modules
+# Copy the rest of the frontend source code
 COPY ./frontend .
 
-CMD ["npm", "run", "dev"]
+# Build the production-ready assets (optional, depending on your needs)
+RUN npm run build
 
+# Stage 2: Final Image
+FROM node:18.14.2-alpine3.17
+
+# Set a non-root user for security
+USER node
+
+# Set working directory
+WORKDIR /usr/src/frontend
+
+# Copy built artifacts and installed node_modules from the builder stage
+COPY --chown=node:node --from=builder-stage /usr/src/frontend .
+
+# Set appropriate permissions
+RUN chmod -R 777 node_modules
+
+# Start the development server
+CMD ["npm", "run", "dev"]
