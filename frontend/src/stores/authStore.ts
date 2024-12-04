@@ -1,31 +1,76 @@
 import { defineStore } from 'pinia';
-import { login, logout, getUser } from '../api/auth';
+import { login, logout } from '../api/auth';
+import axiosInstance from "@/api/axiosInstance";
+
+// Definícia rozhrania pre údaje používateľa
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
+    user: null as User | null, // Používateľ môže byť objekt User alebo null
     isAuthenticated: false,
   }),
   actions: {
     async login(email: string, password: string) {
-      const userData = await login(email, password);
-      this.user = userData.user;
+      const userData = await login(email, password); // Získame údaje z API
+      this.user = userData.data; // Očakávame, že API vracia `data`
       this.isAuthenticated = true;
+
+      // Uloženie používateľa do localStorage
+      localStorage.setItem('user', JSON.stringify({ data: this.user }));
+
+      console.log(this.user);
+      console.log(this.isAuthenticated);
     },
-    async logout() {
-      await logout();
-      this.user = null;
-      this.isAuthenticated = false;
-    },
-    async fetchUser() {
-      try {
-        const userData = await getUser();
-        this.user = userData;
-        this.isAuthenticated = true;
-      } catch {
+
+    initialize() {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        // Ak používateľ existuje v localStorage, obnovíme stav
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          this.user = parsedUser.data; // Pristúpime k `data`
+          this.isAuthenticated = true;
+
+          // Voliteľne: Validácia relácie na backend-e
+          axiosInstance.get<User>('/api/user', { withCredentials: true })
+            .then((response) => {
+              this.user = response.data; // Aktualizujeme údaje používateľa
+              localStorage.setItem('user', JSON.stringify({ data: response.data }));
+            })
+            .catch(() => {
+              // Ak relácia nie je platná, odhlásime používateľa
+              this.logout();
+            });
+        } catch (error) {
+          console.error('Failed to parse user data from localStorage:', error);
+          this.user = null;
+          this.isAuthenticated = false;
+        }
+      } else {
+        // Ak údaje neexistujú, resetujeme stav
         this.user = null;
         this.isAuthenticated = false;
       }
+    },
+
+    async logout() {
+      // Odstránenie používateľa z localStorage
+      localStorage.removeItem('user');
+
+      await logout(); // Voláme API na odhlásenie
+      this.user = null;
+      this.isAuthenticated = false;
+
+      console.log(this.user);
+      console.log(this.isAuthenticated);
     },
   },
 });

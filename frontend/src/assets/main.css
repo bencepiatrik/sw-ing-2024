@@ -7,7 +7,14 @@
   font-weight: normal;
 }
 
-a,
+.app-container {
+  background-color: rgb(44, 102, 144); 
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+a
+,
 .green {
   text-decoration: none;
   color: hsla(160, 100%, 37%, 1);
@@ -28,8 +35,8 @@ a,
   }
 
   #app {
+    padding-top: 40px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    width: 1900vh;
   }
 }
