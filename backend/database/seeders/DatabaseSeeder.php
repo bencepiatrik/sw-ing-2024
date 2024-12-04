@@ -6,6 +6,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Work;
+use App\Models\News;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -32,5 +33,12 @@ class DatabaseSeeder extends Seeder
         $work->description = "Work description 1";
         $work->status = 1;
         $work->save();
+
+        $news = new News();
+        $news->title = "Test News 1";
+        $news->text = "This is a test news items.";
+        $news->image_source = "https://example.com/test-image.jpg";
+        $news->link_source = "https://example.com";
+        $news->save();
     }
 }
