@@ -9,10 +9,17 @@
     <v-main>
       <v-container>
         <v-row>
+          <!-- Image Carousel -->
           <v-col cols="12" md="6">
-            <v-img src="./assets/logo.png" alt="Welcome Image" class="mb-4" height="400px"></v-img>
+            <v-carousel hide-delimiters height="400px">
+              <v-carousel-item v-for="(image, index) in carouselImages" :key="index">
+                <v-img :src="image.src" :alt="image.alt" class="carousel-image"></v-img>
+              </v-carousel-item>
+            </v-carousel>
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center" style="width: 600px; height: 300px;">
+
+          <!-- Welcome Text and Buttons -->
+          <v-col cols="12" md="6" class="d-flex justify-center">
             <v-card class="pa-8" outlined>
               <v-card-title class="justify-center">Vitajte na našej úvodnej stránke!</v-card-title>
               <v-card-subtitle class="text-center">Sme radi, že ste tu.</v-card-subtitle>
@@ -58,6 +65,7 @@
   </v-app>
 </template>
 
+
 <script>
 import { useAuthStore } from "../stores/authStore";
 import { onMounted } from "vue";
@@ -71,8 +79,14 @@ export default {
         { title: "Welcome", description: "Welcome to our page" },
         { title: "To do..", description: "To do" },
       ],
+      carouselImages: [
+        { src: new URL('@/assets/image1.jpg', import.meta.url).href, alt: 'Image 1' },
+        { src: new URL('@/assets/image2.jpg', import.meta.url).href, alt: 'Image 2' },
+        { src: new URL('@/assets/image3.gif', import.meta.url).href, alt: 'Image 3' },
+      ],
+
       showArticle: false, // To toggle the article modal
-      currentArticleTitle: '', // To store the current article title
+      currentArticleTitle: "", // To store the current article title
     };
   },
   setup() {
@@ -105,13 +119,16 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .v-main {
   background-color: #f5f5f5;
 }
+
 .v-card {
   transition: all 0.3s ease;
 }
+
 .v-card:hover {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -120,5 +137,10 @@ export default {
   margin: 0 auto;
   margin-left: 25%;
   margin-top: 25%;
+}
+
+.carousel-image {
+  border-radius: 10px;
+  object-fit: cover;
 }
 </style>
