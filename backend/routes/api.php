@@ -34,3 +34,9 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 Route::post('/works', [WorkController::class, 'store']);
+
+Route::get('/users', [UserController::class, 'index']);
+
+Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
+
+Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
