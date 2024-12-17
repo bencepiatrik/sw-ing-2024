@@ -14,7 +14,7 @@
             <v-carousel hide-delimiters height="400px">
               <v-carousel-item v-for="(image, index) in carouselImages" :key="index">
                 <v-img :src="image.src" :alt="image.alt" class="carousel-image"></v-img>
-              </v-carousel-item>
+              </v-carousel-item>  
             </v-carousel>
           </v-col>
 

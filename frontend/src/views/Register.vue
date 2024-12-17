@@ -8,11 +8,10 @@
     <!-- Register Form -->
     <v-container
       class="d-flex justify-center align-center"
-      style="height: 70vh;"
-      :class="{ 'blur-background': isLoading }"
-    >
-      <v-card elevation="4" class="pa-4" width="350">
-        <v-img src="@/assets/logo.png" alt="Econf Logo" class="mb-4" max-height="100"></v-img>
+      style="height: 100vh; margin-top: -100px;"
+      :class="{ 'blur-background': isLoading }">
+      <v-card elevation="4" class="pa-4" width="400">
+        <v-img :width="300" aspect-ratio="16/9" cover src="/logo.jpg"class="mx-auto"/> <br>
         <v-form @submit.prevent="handleRegister">
           <v-text-field
             v-model="name"
@@ -66,7 +65,7 @@
             type="submit"
             class="mb-1"
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-account-plus" />
             Registrácia
           </v-btn>
         </v-form>
@@ -76,7 +75,7 @@
             block
             outlined
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-login" />
             Späť na prihlasovanie
           </v-btn>
         </RouterLink>
