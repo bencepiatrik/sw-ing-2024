@@ -17,105 +17,35 @@
         </v-card>
         <v-row>
           <v-col class="ma-4">
-<!--@foreach($data as $i => $d)-->
             <v-expansion-panels>
-              <v-expansion-panel class="my-2">
+              <v-expansion-panel
+                v-for="category in categories"
+                :key="category.id"
+                class="my-2"
+              >
                 <v-expansion-panel-title style="background-color: #e9efff">
                   <v-row no-gutters>
                     <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                      TITLE
+                      {{ category.name }}
                     </v-col>
-                    <v-col class="d-flex justify-center" cols="3">
-                      Category
+                    <v-col class="d-flex justify-center" cols="6">
+                      {{ category.description }}
                     </v-col>
-                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold" >
-                      Status
-                    </v-col>
-
-                    <v-col class="d-flex justify-center" cols="3">
-                      Uploaded
+                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
+                      Active
                     </v-col>
                   </v-row>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                  <v-row justify="start" no-gutters >
-
-                      <v-col class="d-flex justify-center" cols="10"><v-expansion-panel-text>
-                      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
-                      </v-expansion-panel-text></v-col>
+                  <v-row justify="start" no-gutters>
+                    <v-col class="d-flex justify-center align-center" cols="10">
+                      <p>{{ category.description }}</p>
+                    </v-col>
                     <v-col class="d-flex justify-center align-center" cols="2">
                       <v-btn color="primary">
                         Open
                       </v-btn>
                     </v-col>
-
-                  </v-row>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-<!--@endforeach-->
-              <v-expansion-panel class="my-2">
-                <v-expansion-panel-title style="background-color: #e9efff">
-                  <v-row no-gutters>
-                    <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                      TITLE
-                    </v-col>
-                    <v-col class="d-flex justify-center" cols="3">
-                      Category
-                    </v-col>
-                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold" >
-                      Status
-                    </v-col>
-
-                    <v-col class="d-flex justify-center" cols="3">
-                      Uploaded
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-row justify="start" no-gutters >
-
-                    <v-col class="d-flex justify-center" cols="10"><v-expansion-panel-text>
-                      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
-                    </v-expansion-panel-text></v-col>
-                    <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary">
-                        Open
-                      </v-btn>
-                    </v-col>
-
-                  </v-row>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel class="my-2">
-                <v-expansion-panel-title style="background-color: #e9efff">
-                  <v-row no-gutters>
-                    <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                      TITLE
-                    </v-col>
-                    <v-col class="d-flex justify-center" cols="3">
-                      Category
-                    </v-col>
-                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold" >
-                      Status
-                    </v-col>
-
-                    <v-col class="d-flex justify-center" cols="3">
-                      Uploaded
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-row justify="start" no-gutters >
-
-                    <v-col class="d-flex justify-center" cols="10"><v-expansion-panel-text>
-                      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
-                    </v-expansion-panel-text></v-col>
-                    <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary">
-                        Open
-                      </v-btn>
-                    </v-col>
-
                   </v-row>
                 </v-expansion-panel-text>
               </v-expansion-panel>
@@ -127,19 +57,38 @@
   </v-app>
 </template>
 
+
 <script>
+import axiosInstance from "@/api/axiosInstance";
+import { ref, onMounted } from "vue";
 import { useAuthStore } from "../stores/authStore";
 
 export default {
   setup() {
     const authStore = useAuthStore();
+    const categories = ref([]);
+
+    // Funkcia na načítanie kategórií z API
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosInstance.get("/api/categories");
+        categories.value = response.data;
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
     const handleLogout = () => {
       authStore.logout();
       window.location.href = "/";
     };
 
+    onMounted(() => {
+      fetchCategories(); // Načítanie dát po načítaní stránky
+    });
+
     return {
+      categories,
       handleLogout,
     };
   },
