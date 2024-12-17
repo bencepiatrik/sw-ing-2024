@@ -3,10 +3,10 @@
     <v-app-bar app>
       <v-toolbar-title>Main Page</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text href="/profile">Profile</v-btn>
-      <v-btn text href="/admin">Admin Panel</v-btn>
-      <v-btn text href="/">Landing</v-btn>
-      <v-btn text @click="handleLogout">Logout</v-btn>
+      <v-btn variant="text" href="/profile">Profile</v-btn>
+      <v-btn variant="text" href="/admin">Admin Panel</v-btn>
+      <v-btn variant="text" href="/">Landing</v-btn>
+      <v-btn variant="text" @click="handleLogout">Logout</v-btn>
     </v-app-bar>
     <v-main>
       <v-container class="text-center">
@@ -43,7 +43,7 @@
                       <p>{{ category.description }}</p>
                     </v-col>
                     <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary">
+                      <v-btn color="primary" @click="openCategoryPage(category.id)">
                         Open
                       </v-btn>
                     </v-col>
@@ -58,42 +58,44 @@
   </v-app>
 </template>
 
-
-<script>
-import axiosInstance from "@/api/axiosInstance";
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../stores/authStore";
 
-export default {
-  setup() {
-    const authStore = useAuthStore();
-    const categories = ref([]);
+// Inicializácia routera a authStore
+const router = useRouter();
+const authStore = useAuthStore();
 
-    // Funkcia na načítanie kategórií z API
-    const fetchCategories = async () => {
-      try {
-        const response = await axiosInstance.get("/api/categories");
-        categories.value = response.data;
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+// Reaktívne dáta pre kategórie
+const categories = ref<Array<{ id: number; name: string; description: string }>>([]);
 
-    const handleLogout = () => {
-      authStore.logout();
-      window.location.href = "/";
-    };
-
-    onMounted(() => {
-      fetchCategories(); // Načítanie dát po načítaní stránky
-    });
-
-    return {
-      categories,
-      handleLogout,
-    };
-  },
+// Funkcia na načítanie kategórií z API
+const fetchCategories = async () => {
+  try {
+    const response = await axiosInstance.get("/api/categories");
+    categories.value = response.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
 };
+
+// Funkcia pre otvorenie detailu kategórie
+const openCategoryPage = (categoryId: number) => {
+  router.push(`/categories/${categoryId}`);
+};
+
+// Funkcia pre odhlásenie
+const handleLogout = () => {
+  authStore.logout();
+  router.push("/"); // Namiesto window.location.href
+};
+
+// Načítanie kategórií po načítaní komponenty
+onMounted(() => {
+  fetchCategories();
+});
 </script>
 
 <style scoped>
