@@ -39,6 +39,23 @@
             </v-card>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col
+            v-for="(newsItem, index) in news"
+            :key="newsItem.id"
+            cols="12"
+            sm="4"
+          >
+            <v-card class="pa-3 text-center" outlined>
+              <v-card-title>{{ newsItem.title }}</v-card-title>
+              <v-card-text>{{ newsItem.text }}</v-card-text>
+              <v-btn color="primary" @click="readArticle(newsItem.id)">
+                READ ARTICLE
+              </v-btn>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
 
@@ -67,27 +84,52 @@
 
 
 <script>
+import axiosInstance from "@/api/axiosInstance";
 import { useAuthStore } from "../stores/authStore";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
+
 export default {
   data() {
     return {
+      news: [],
       features: [
         { title: "Tutorial", description: "Tutorial to the webpage" },
         { title: "Welcome", description: "Welcome to our page" },
         { title: "To do..", description: "To do" },
       ],
       carouselImages: [
-        { src: new URL('@/assets/image1.jpg', import.meta.url).href, alt: 'Image 1' },
+        { src: new URL('@/assets/tiger.png', import.meta.url).href, alt: 'Image 1' },
         { src: new URL('@/assets/image2.jpg', import.meta.url).href, alt: 'Image 2' },
         { src: new URL('@/assets/image3.gif', import.meta.url).href, alt: 'Image 3' },
       ],
-
-      showArticle: false, // To toggle the article modal
-      currentArticleTitle: "", // To store the current article title
     };
+  },
+  mounted() {
+    this.fetchNews();
+  },
+  methods: {
+    async fetchNews() {
+      try {
+        const response = await axiosInstance.get("/api/news");
+        this.news = response.data;
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    },
+    goToLoginPage() {
+      // Navigate to login page
+      this.$router.push("/login");
+    },
+    goToRegisterPage() {
+      // Navigate to register page
+      this.$router.push("/register");
+    },
+    openArticlePage(title) {
+      this.currentArticleTitle = title; // Set the article title dynamically
+      this.showArticle = true; // Show the article modal
+    },
   },
   setup() {
     const authStore = useAuthStore();
@@ -102,7 +144,7 @@ export default {
 
     return {};
   },
-  methods: {
+  /*methods: {
     goToLoginPage() {
       // Navigate to login page
       this.$router.push("/login");
@@ -115,7 +157,7 @@ export default {
       this.currentArticleTitle = title; // Set the article title dynamically
       this.showArticle = true; // Show the article modal
     },
-  },
+  },*/
 };
 </script>
 
