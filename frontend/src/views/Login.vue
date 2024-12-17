@@ -5,21 +5,13 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </div>
 
-    <!-- Logo -->
-    <v-img
-      :width="314"
-      aspect-ratio="16/9"
-      cover
-      src="@/assets/logo.png"
-    ></v-img>
-
     <!-- Login Form -->
     <v-container
-      class="d-flex justify-center align-center"
-      style="height: 70vh;"
-      :class="{ 'blur-background': isLoading }"
-    >
-      <v-card elevation="5" class="pa-5" width="400">
+  class="d-flex justify-center align-center"
+  style="height: 100vh; margin-top: -200px;"
+  :class="{ 'blur-background': isLoading }">
+  <v-card elevation="5" class="pa-5" width="400">
+    <v-img :width="300" aspect-ratio="16/9" cover src="/logo.jpg"class="mx-auto"/> <br>
         <v-form @submit.prevent="handleLogin">
           <v-text-field
             v-model="email"
@@ -46,7 +38,7 @@
             type="submit"
             class="mb-3"
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-login" />
             Prihlasovanie
           </v-btn>
           <v-btn
@@ -55,7 +47,7 @@
             outlined
             @click="goToRegister"
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-account-plus" />
             Registrácia
           </v-btn>
         </v-form>
