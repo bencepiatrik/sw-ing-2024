@@ -5,6 +5,7 @@ import Login from '../views/Login.vue';
 import Register from "../views/Register.vue"; // Import the Register component
 import MainPage from "../views/MainPage.vue";
 import ProfilePage from "../views/Profile.vue";
+import AdminPage from "@/views/AdminPage.vue";
 
 const routes = [
   {
@@ -32,6 +33,12 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminPage,
     meta: { requiresAuth: true },
   },
 ];
