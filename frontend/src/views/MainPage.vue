@@ -4,6 +4,7 @@
       <v-toolbar-title>Main Page</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn text href="/profile">Profile</v-btn>
+      <v-btn text href="/admin">Admin Panel</v-btn>
       <v-btn text href="/">Landing</v-btn>
       <v-btn text @click="handleLogout">Logout</v-btn>
     </v-app-bar>
