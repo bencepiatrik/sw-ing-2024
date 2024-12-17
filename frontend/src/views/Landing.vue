@@ -50,7 +50,7 @@
             <v-card class="pa-3 text-center" outlined>
               <v-card-title>{{ newsItem.title }}</v-card-title>
               <v-card-text>{{ newsItem.text }}</v-card-text>
-              <v-btn color="primary" @click="readArticle(newsItem.id)">
+              <v-btn color="primary" @click="openArticlePage(newsItem.title)">
                 READ ARTICLE
               </v-btn>
             </v-card>
@@ -66,22 +66,21 @@
       </v-col>
     </v-footer>
 
-    <!-- Article Modal / Overlay -->
-    <v-dialog v-model="showArticle" max-width="800px">
+ <!-- Article -->
+ <v-dialog v-model="showArticle" max-width="800px">
       <v-card>
         <v-card-title>{{ currentArticleTitle }}</v-card-title>
         <v-card-text>
           <!-- Article content can be dynamically loaded here -->
-          <p>Article content for {{ currentArticleTitle }} goes here.</p>
+          <p>Article content for {{ currentArticleTitle }} goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
         </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue" @click="showArticle = false">Close</v-btn>
+        <v-card-actions class="d-flex justify-center">
+          <v-btn color="blue" @click="showArticle = false" class="ma-4">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-app>
 </template>
-
 
 <script>
 import axiosInstance from "@/api/axiosInstance";
@@ -89,10 +88,11 @@ import { useAuthStore } from "../stores/authStore";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
-
 export default {
   data() {
     return {
+      currentArticleTitle: '', // Added to hold the title of the current article
+      showArticle: false, // Added to control modal visibility
       news: [],
       features: [
         { title: "Tutorial", description: "Tutorial to the webpage" },
@@ -144,23 +144,8 @@ export default {
 
     return {};
   },
-  /*methods: {
-    goToLoginPage() {
-      // Navigate to login page
-      this.$router.push("/login");
-    },
-    goToRegisterPage() {
-      // Navigate to register page
-      this.$router.push("/register");
-    },
-    openArticlePage(title) {
-      this.currentArticleTitle = title; // Set the article title dynamically
-      this.showArticle = true; // Show the article modal
-    },
-  },*/
 };
 </script>
-
 
 <style scoped>
 .v-main {
@@ -188,5 +173,16 @@ export default {
 .v-main {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.v-dialog .v-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.v-card-actions {
+  margin-top: auto; 
+  justify-content: center;
 }
 </style>
