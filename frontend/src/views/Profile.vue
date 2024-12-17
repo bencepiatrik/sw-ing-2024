@@ -1,31 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
-// Create a reactive object to store user data
-const user = ref({
-  id: null,
-  name: '',
-  email: '',
-  email_verified_at: null,
-  created_at: '',
-  updated_at: '',
-});
-
-// Fetch user data from localStorage on component mount
-onMounted(() => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser) {
-    try {
-      const parsedUser = JSON.parse(storedUser);
-      user.value = parsedUser.data;
-    } catch (error) {
-      console.error('Failed to parse user data from localStorage:', error);
-    }
-  }
-});
+// Získame reaktívne referencie zo store
+const { user } = storeToRefs(authStore);
 
 // Navigate to the edit profile page
 const goToEditProfile = () => {
@@ -43,7 +25,7 @@ const goToMainPage = () => {
     <div class="profile-editor">
       <div class="profile-card">
         <h1>Profile</h1>
-        <div v-if="user.id">
+        <div v-if="user && user.id">
           <p><strong>ID:</strong> {{ user.id }}</p>
           <p><strong>Name:</strong> {{ user.name }}</p>
           <p><strong>Email:</strong> {{ user.email }}</p>
@@ -57,7 +39,7 @@ const goToMainPage = () => {
           <p><strong>Updated At:</strong> {{ new Date(user.updated_at).toLocaleString() }}</p>
         </div>
         <div v-else>
-          <p>No user data available.</p>
+          <p>Loading user data, please wait..</p>
         </div>
         <div class="button-container">
           <button @click="goToEditProfile">Edit Profile</button>
