@@ -79,5 +79,21 @@ class DatabaseSeeder extends Seeder
         $news->image_source = "https://example.com/test-image.jpg";
         $news->link_source = "https://example.com";
         $news->save();
+
+        // Create News 2
+        $news = new News();
+        $news->title = "Test News 2";
+        $news->text = "This is a test news item.";
+        $news->image_source = "https://example.com/test-image.jpg";
+        $news->link_source = "https://example.com";
+        $news->save();
+
+        // Create News 3
+        $news = new News();
+        $news->title = "Test News 3";
+        $news->text = "This is a test news item.";
+        $news->image_source = "https://example.com/test-image.jpg";
+        $news->link_source = "https://example.com";
+        $news->save();
     }
 }

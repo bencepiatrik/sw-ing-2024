@@ -11,7 +11,7 @@
       style="height: 100vh; margin-top: -100px;"
       :class="{ 'blur-background': isLoading }">
       <v-card elevation="4" class="pa-4" width="400">
-        <v-img :width="300" aspect-ratio="16/9" cover src="/logo.jpg"class="mx-auto"/> <br>
+        <v-img :width="300" aspect-ratio="16/9" cover src="/logoOriginal.jpg"class="mx-auto" style="border-radius: 5px;"/> <br>
         <v-form @submit.prevent="handleRegister">
           <v-text-field
             v-model="name"
@@ -59,7 +59,7 @@
             :disabled="isLoading"
           ></v-text-field>
           <v-btn
-            color="primary"
+            color="#4A7891"
             block
             large
             type="submit"
@@ -71,7 +71,7 @@
         </v-form>
         <RouterLink to="/login">
           <v-btn
-            color="secondary"
+            color="#2D627F"
             block
             outlined
             :disabled="isLoading"
@@ -185,5 +185,6 @@ export default {
   .v-progress-circular {
     color: #007bff;
   }
+
 </style>
 

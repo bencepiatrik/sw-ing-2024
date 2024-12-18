@@ -11,7 +11,7 @@
   style="height: 100vh; margin-top: -200px;"
   :class="{ 'blur-background': isLoading }">
   <v-card elevation="5" class="pa-5" width="400">
-    <v-img :width="300" aspect-ratio="16/9" cover src="/logo.jpg"class="mx-auto"/> <br>
+    <v-img :width="300" aspect-ratio="16/9" cover src="/logoOriginal.jpg"class="mx-auto" style="border-radius: 5px;"/> <br>
         <v-form @submit.prevent="handleLogin">
           <v-text-field
             v-model="email"
@@ -32,7 +32,7 @@
             :disabled="isLoading"
           ></v-text-field>
           <v-btn
-            color="primary"
+            color="#4A7891"
             block
             large
             type="submit"
@@ -42,7 +42,7 @@
             Prihlasovanie
           </v-btn>
           <v-btn
-            color="secondary"
+            color="#2D627F"
             block
             outlined
             @click="goToRegister"
@@ -123,9 +123,6 @@ export default {
   z-index: 9999;
 }
 
-.body {
-  background-color: #007bff;
-}
 
 .blur-background {
   filter: blur(5px);
