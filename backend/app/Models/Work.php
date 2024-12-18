@@ -9,8 +9,15 @@ class Work extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'work_id';
-    protected $fillable = ['title', 'category_id', 'user_id', 'description', 'status'];
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'title',
+        'description',
+        'category_id',
+        'user_id',
+        'files',
+        'status',
+    ];
 
     public function user()
     {

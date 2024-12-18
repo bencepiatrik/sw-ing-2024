@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->enum('status', ['submitted', 'under_review', 'reviewed'])->default('submitted');
+            $table->json('files')->nullable();
             $table->timestamps();
         });
     }

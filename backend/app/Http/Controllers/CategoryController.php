@@ -16,4 +16,14 @@ class CategoryController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    public function show($id): JsonResponse
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        return response()->json($category);
+    }
 }

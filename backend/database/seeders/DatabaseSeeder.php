@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $userRole->save();
 
         $reviewerRole = new Role();
-        $reviewerRole->name = "review";
+        $reviewerRole->name = "reviewer";
         $reviewerRole->save();
 
         $adminRole = new Role();

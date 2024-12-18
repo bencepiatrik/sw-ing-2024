@@ -5,7 +5,8 @@ import Login from '../views/Login.vue';
 import Register from "../views/Register.vue"; // Import the Register component
 import MainPage from "../views/MainPage.vue";
 import ProfilePage from "../views/Profile.vue";
-import AdminPage from "@/views/AdminPage.vue";
+import AdminPage from "../views/AdminPage.vue";
+import CategoryDetail from "../views/CategoryDetail.vue";
 
 const routes = [
   {
@@ -34,6 +35,13 @@ const routes = [
     name: "Profile",
     component: ProfilePage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/categories/:id",
+    name: "CategoryDetail",
+    component: CategoryDetail,
+    meta: { requiresAuth: true },
+    props: true, // Odovzdáva ID ako prop do komponenty
   },
   {
     path: "/admin",
