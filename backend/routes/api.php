@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -40,3 +41,5 @@ Route::get('/users', [UserController::class, 'index']);
 Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
 
 Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
+
+Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index']);
