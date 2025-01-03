@@ -12,9 +12,10 @@
     "strict": true,
     "jsx": "preserve",
     "allowJs": true,
+    "noImplicitAny": false,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts", "src/shims-vue.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts", "src/**/*.d.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "./tsconfig.node.json" },

@@ -8,10 +8,10 @@
     <v-app-bar app>
       <v-toolbar-title>Admin Panel</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text href="/main">Home</v-btn>
-      <v-btn text href="/profile">Profile</v-btn>
-      <v-btn text href="/">Landing</v-btn>
-      <v-btn text @click="handleLogout">Logout</v-btn>
+      <v-btn variant="text" href="/main">Home</v-btn>
+      <v-btn variant="text" href="/profile">Profile</v-btn>
+      <v-btn variant="text" href="/">Landing</v-btn>
+      <v-btn variant="text" @click="handleLogout">Logout</v-btn>
     </v-app-bar>
 
     <!-- Sidebar + Content Layout -->
@@ -54,90 +54,108 @@
           <v-select
             v-model="selectedRole"
             :items="roles"
-            label="Select a role"
             item-text="name"
             item-value="name"
           ></v-select>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="confirmChangeRole">Save</v-btn>
-          <v-btn color="red darken-1" text @click="closeDialog">Cancel</v-btn>
+          <v-btn color="blue darken-1" variant="text" @click="confirmChangeRole">Save</v-btn>
+          <v-btn color="red darken-1" variant="text" @click="closeDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-app>
 </template>
 
-<script>
-import axiosInstance from "@/api/axiosInstance";
+<script setup lang="ts">
+import { ref } from "vue";
+import axiosInstance from "../api/axiosInstance";
 
-export default {
-  data() {
-    return {
-      showUsersTable: false, // Show user table toggle
-      users: [],
-      headers: [
-        { text: "User ID", value: "id" },
-        { text: "Role ID", value: "role_id" },
-        { text: "Name", value: "name" },
-        { text: "Email", value: "email" },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-      showChangeRoleDialog: false, // Dialog visibility toggle
-      selectedRole: "", // Currently selected role
-      selectedUser: null, // User whose role is being changed
-      roles: ["user", "reviewer", "admin"], // Hardcoded role options
-    };
-  },
-  methods: {
-    handleLogout() {
-      sessionStorage.removeItem("user");
-      window.location.href = "/";
-    },
-    async fetchUsers() {
-      this.showUsersTable = true;
-      try {
-        const response = await axiosInstance.get("/api/users");
-        this.users = response.data;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    },
-    openChangeRoleDialog(user) {
-      this.selectedUser = user;
-      this.selectedRole = user.role || "user";
-      this.showChangeRoleDialog = true;
-    },
-    async confirmChangeRole() {
-      if (!this.selectedRole || !this.selectedUser) return;
-      try {
-        await axiosInstance.post(`/api/users/${this.selectedUser.id}/change-role`, {
-          role: this.selectedRole,
-        });
-        alert("Role changed successfully!");
-        this.fetchUsers();
-        this.closeDialog();
-      } catch (error) {
-        console.error("Error changing role:", error);
-        alert("Failed to change role");
-      }
-    },
-    deleteUser(user) {
-      if (confirm(`Are you sure you want to delete ${user.name}?`)) {
-        axiosInstance.delete(`/api/users/${user.id}`).then(() => {
-          this.fetchUsers();
-          alert("User deleted successfully!");
-        });
-      }
-    },
-    closeDialog() {
-      this.showChangeRoleDialog = false;
-      this.selectedRole = "";
-      this.selectedUser = null;
-    },
-  },
+// Reactive variables
+const showUsersTable = ref(false); // Show user table toggle
+const users = ref<
+  { id: number; role_id: number; role: string; name: string; email: string }[]
+>([]);
+
+const headers = ref([
+  { text: "User ID", value: "id" },
+  { text: "Role ID", value: "role_id" },
+  { text: "Name", value: "name" },
+  { text: "Email", value: "email" },
+  { text: "Actions", value: "actions", sortable: false },
+]);
+
+const showChangeRoleDialog = ref(false); // Dialog visibility toggle
+const selectedRole = ref<string>(""); // Currently selected role
+const selectedUser = ref<{ id: number; role: string; name: string } | null>(null); // User whose role is being changed
+const roles = ref(["user", "reviewer", "admin"]); // Hardcoded role options
+
+// Methods
+const handleLogout = () => {
+  sessionStorage.removeItem("user");
+  window.location.href = "/";
+};
+
+const fetchUsers = async () => {
+  showUsersTable.value = true;
+  try {
+    const response = await axiosInstance.get("/api/users");
+    users.value = response.data.map((user: { id: number; role_id: number; name: string; email: string }) => ({
+      ...user,
+      role: mapRoleIdToRole(user.role_id), // Pridaj vlastnosť `role`
+    }));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
+
+const mapRoleIdToRole = (role_id: number): string => {
+  const roles = {
+    1: "user",
+    2: "reviewer",
+    3: "admin",
+  };
+  return roles[role_id] || "unknown";
+};
+
+
+const openChangeRoleDialog = (user: { id: number; role: string; name: string }) => {
+  selectedUser.value = user;
+  selectedRole.value = user.role || "user";
+  showChangeRoleDialog.value = true;
+};
+
+const confirmChangeRole = async () => {
+  if (!selectedRole.value || !selectedUser.value) return;
+  try {
+    await axiosInstance.post(`/api/users/${selectedUser.value.id}/change-role`, {
+      role: selectedRole.value,
+    });
+    alert("Role changed successfully!");
+    fetchUsers();
+    closeDialog();
+  } catch (error) {
+    console.error("Error changing role:", error);
+    alert("Failed to change role");
+  }
+};
+
+const deleteUser = (user: { id: number; name: string }) => {
+  if (confirm(`Are you sure you want to delete ${user.name}?`)) {
+    axiosInstance.delete(`/api/users/${user.id}`).then(() => {
+      fetchUsers();
+      alert("User deleted successfully!");
+    });
+  }
+};
+
+const closeDialog = () => {
+  showChangeRoleDialog.value = false;
+  selectedRole.value = "";
+  selectedUser.value = null;
 };
 </script>
+
 
 <style scoped>
 .icon-color {

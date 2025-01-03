@@ -77,7 +77,7 @@
   
   <script setup lang="ts">
     import axiosInstance from "../api/axiosInstance";
-    import { ref, onMounted, computed } from "vue";
+    import { ref, onMounted } from "vue";
     import { useRoute, useRouter } from "vue-router";
 
     // Typy

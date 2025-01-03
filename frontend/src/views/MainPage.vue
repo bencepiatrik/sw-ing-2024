@@ -10,17 +10,24 @@
     </v-app-bar>
     <v-main class="text-center pa-8">
       <v-row>
+        <!-- Sidebar na filtrovanie -->
         <v-col cols="2">
           <v-card>
             <v-card-title>Filtrovať</v-card-title>
-            <v-checkbox dense label="Category1"></v-checkbox>
-            <v-checkbox dense label="Skola1"></v-checkbox>
-            <v-checkbox label="Rok1"></v-checkbox>
-            <v-checkbox label="Checkbox"></v-checkbox>
+            <v-checkbox
+              v-for="filter in ['Category1', 'Skola1', 'Rok1', 'Checkbox']"
+              :key="filter"
+              :label="filter"
+              :value="filter"
+              v-model="selectedFilters"
+            ></v-checkbox>
           </v-card>
         </v-col>
+
+        <!-- Hlavný obsah -->
         <v-col cols="10">
           <v-row>
+            <!-- Vyhľadávanie -->
             <v-col cols="8">
               <v-text-field
                 v-model="search"
@@ -28,17 +35,21 @@
                 prepend-inner-icon="mdi-magnify"
               ></v-text-field>
             </v-col>
+
+            <!-- Zoradenie -->
             <v-col cols="4">
               <v-select
+                v-model="sortOrder"
                 label="Select"
                 :items="['A -> Z (Title)', 'Z -> A (Title)', 'Najnovší', 'Najstarší']"
               ></v-select>
             </v-col>
           </v-row>
 
+          <!-- Zoznam kategórií -->
           <v-expansion-panels>
             <v-expansion-panel
-              v-for="category in categories"
+              v-for="category in filteredCategories"
               :key="category.id"
               class="my-2"
             >
@@ -76,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axiosInstance from '../api/axiosInstance'
 import { useAuthStore } from '../stores/authStore'
@@ -86,7 +97,12 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 // Reaktívne dáta pre kategórie
-const categories = ref<Array<{ id: number; name: string; description: string }>>([])
+const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([])
+
+// Reaktívne premenné pre vyhľadávanie, filtrovanie a zoradenie
+const search = ref<string>("")
+const selectedFilters = ref<string[]>([]) // Vybrané hodnoty checkboxov
+const sortOrder = ref<string>("A -> Z (Title)")
 
 // Funkcia na načítanie kategórií z API
 const fetchCategories = async () => {
@@ -98,6 +114,37 @@ const fetchCategories = async () => {
   }
 }
 
+// Odvodené dáta pre filtrované a zoradené kategórie
+const filteredCategories = computed(() => {
+  let filtered = categories.value
+
+  // Filtrovanie podľa checkboxov
+  if (selectedFilters.value.length > 0) {
+    filtered = filtered.filter(category =>
+      selectedFilters.value.includes(category.name)
+    )
+  }
+
+  // Vyhľadávanie podľa textu
+  filtered = filtered.filter(category =>
+    category.name.toLowerCase().includes(search.value.toLowerCase())
+  )
+
+  // Zoradenie
+  switch (sortOrder.value) {
+    case "A -> Z (Title)":
+      return filtered.sort((a, b) => a.name.localeCompare(b.name))
+    case "Z -> A (Title)":
+      return filtered.sort((a, b) => b.name.localeCompare(a.name))
+    case "Najnovší":
+      return filtered.sort((a, b) => b.id - a.id) // Predpokladáme, že `id` reprezentuje čas
+    case "Najstarší":
+      return filtered.sort((a, b) => a.id - b.id)
+    default:
+      return filtered
+  }
+})
+
 // Funkcia pre otvorenie detailu kategórie
 const openCategoryPage = (categoryId: number) => {
   router.push(`/categories/${categoryId}`)
@@ -106,7 +153,7 @@ const openCategoryPage = (categoryId: number) => {
 // Funkcia pre odhlásenie
 const handleLogout = () => {
   authStore.logout()
-  router.push('/') // Namiesto window.location.href
+  router.push('/')
 }
 
 // Načítanie kategórií po načítaní komponenty
