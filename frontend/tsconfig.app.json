@@ -8,6 +8,8 @@
     "baseUrl": ".",
     "noEmit": false,
     "emitDeclarationOnly": true,
+    "allowJs": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"]
     }

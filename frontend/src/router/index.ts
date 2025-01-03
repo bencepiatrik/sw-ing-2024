@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import Landing from "../views/Landing.vue";
-import Login from '../views/Login.vue';
-import Register from "../views/Register.vue"; // Import the Register component
-import MainPage from "../views/MainPage.vue";
-import ProfilePage from "../views/Profile.vue";
-import AdminPage from "../views/AdminPage.vue";
-import CategoryDetail from "../views/CategoryDetail.vue";
+import Register from "@/views/Register.vue"; // Import the Register component
+import MainPage from "@/views/MainPage.vue";
+import ProfilePage from "@/views/Profile.vue";
+import CategoryDetail from "@/views/CategoryDetail.vue";
+import Landing from "@/views/Landing.vue";
+import Login from '@/views/Login.vue';
+import AdminPage from "@/views/AdminPage.vue";
 
 const routes = [
   {
@@ -61,19 +61,21 @@ router.beforeEach((to, from, next) => {
 
   // If user is authenticated and trying to access guest-only pages
   if (authStore.isAuthenticated && ['/login', '/register', '/'].includes(to.path)) {
-    next('/main'); // Redirect to main page
+    return next('/main'); // Redirect to main page and stop further execution
   }
 
   // If the route requires authentication and the user is not logged in
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/'); // Redirect to login page
+    return next('/'); // Redirect to landing page and stop further execution
   }
 
-  next(); // Allow navigation otherwise
+  // Allow navigation otherwise
+  next();
 });
 
 
-/*
+
+
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
@@ -81,5 +83,5 @@ router.beforeEach((to, from, next) => {
   } else {
     next(); // Proceed to the route
   }
-});*/
+});
 export default router;
