@@ -1,61 +1,62 @@
 <template>
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet" />
   <v-app>
-    
     <!-- Navbar -->
     <v-app-bar app color="#2D627F" dark>
-  <v-container fluid>
-    <v-row align="center" no-gutters>
-      <!-- Logo Section -->
-      <v-col cols="1" class="d-flex justify-start align-center">
-        <v-img 
-          :src="'/logo.png'" 
-          contain 
-          style="height: auto; width: auto;" 
-        />
-      </v-col>
+      <v-container fluid>
+        <v-row align="center" no-gutters>
+          <!-- Logo Section -->
+          <v-col cols="1" class="d-flex justify-start align-center">
+            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
+          </v-col>
 
-      <!-- Title Section -->
-      <v-col cols="8" class="d-flex justify-center align-center">
-        <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
-      </v-col>
+          <!-- Title Section -->
+          <v-col cols="8" class="d-flex justify-center align-center">
+            <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
+          </v-col>
 
-      <!-- Buttons Section -->
-      <v-col cols="3" class="d-flex justify-end align-center">
-        <v-btn variant="text" href="/main">Home</v-btn>
-        <v-btn variant="text" href="/profile">Profile</v-btn>
-        <v-btn variant="text" href="/">Landing</v-btn>
-        <v-btn variant="text" @click="handleLogout">Logout</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
-</v-app-bar>
+          <!-- Buttons Section -->
+          <v-col cols="3" class="d-flex justify-end align-center">
+            <v-btn href="/main">Home</v-btn>
+            <v-btn href="/profile">Profile</v-btn>
+            <v-btn href="/">Landing</v-btn>
+            <v-btn @click="handleLogout">Logout</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app-bar>
 
     <!-- Sidebar + Content Layout -->
-    <v-main>
+    <v-main style="background-color: #D9DCD6;">
       <v-container fluid class="d-flex pa-0">
         <!-- Sidebar -->
-        <v-navigation-drawer app permanent width="80" class="sidebar" color="#f5f5f5">
+        <v-navigation-drawer app permanent width="80" class="sidebar">
           <v-list dense>
-            <v-list-item link @click="fetchUsers">
-              <v-icon large class="icon-color">mdi-account</v-icon>
+            <v-list-item link @click="fetchUsers" class="d-flex justify-center">
+              <v-icon large>mdi-account</v-icon>
             </v-list-item>
           </v-list>
         </v-navigation-drawer>
 
         <!-- Main Content -->
-        <v-container class="content-area">
+        <v-container fluid class="content-area pa-4">
           <!-- User Table -->
-          <v-card v-if="showUsersTable" elevation="2" class="pa-4 ma-4">
+          <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px;">
             <v-card-title class="headline text-center">User Management</v-card-title>
             <v-data-table :headers="headers" :items="users" class="elevation-1">
-              <template v-slot:item.actions="{ item }">
-                <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
-                  Change Role
-                </v-btn>
-                <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
-                  Delete
-                </v-btn>
+              <template v-slot:item="{ item }">
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.email }}</td>
+                  <td>{{ item.role }}</td>
+                  <td class="d-flex justify-end">
+                    <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
+                      Change Role
+                    </v-btn>
+                    <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
+                      Delete
+                    </v-btn>
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </v-card>
@@ -68,11 +69,13 @@
       <v-card>
         <v-card-title class="headline">Change Role</v-card-title>
         <v-card-text>
-          <v-select v-model="selectedRole" :items="roles" item-text="name" item-value="name"></v-select>
+          <v-select v-model="selectedRole" :items="roles" label="Select Role" item-text="name" item-value="name">
+          </v-select>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" variant="text" @click="confirmChangeRole">Save</v-btn>
-          <v-btn color="red darken-1" variant="text" @click="closeDialog">Cancel</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" @click="confirmChangeRole">Save</v-btn>
+          <v-btn color="red darken-1" @click="closeDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -170,7 +173,20 @@ const closeDialog = () => {
 
 
 <style scoped>
+.sidebar {
+  background-color: #F5F5F5;
+}
+
 .icon-color {
-  color: #555;
+  color: #2D627F;
+}
+
+.content-area {
+  flex: 1;
+}
+
+.v-data-table {
+  border-radius: 10px;
+  overflow: hidden;
 }
 </style>

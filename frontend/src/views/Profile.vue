@@ -37,16 +37,17 @@ const goToMainPage = () => {
 
       <!-- Title Section -->
       <v-col cols="8" class="d-flex justify-center align-center">
-        <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
+        <v-toolbar-title class="text-h6">My profile</v-toolbar-title>
       </v-col>
 
       <!-- Spacer for Buttons -->
       <v-spacer></v-spacer>
 
       <!-- Buttons Section -->
-      <v-col cols="2" class="d-flex justify-end align-center">
+      <v-col cols="3" class="d-flex justify-end align-center">
         <v-btn variant="text" href="/main">Home</v-btn>
         <v-btn variant="text" href="/profile">Profile</v-btn>
+        <v-btn variant="text" href="/admin">Admin Panel</v-btn>
         <v-btn variant="text" href="/">Landing</v-btn>
       </v-col>
     </v-row>

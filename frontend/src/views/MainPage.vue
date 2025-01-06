@@ -10,17 +10,16 @@
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">   Main Page</v-toolbar-title>
+            <v-toolbar-title class="text-h6">Main Page</v-toolbar-title>
           </v-col>
 
-          <!-- Spacer for Buttons -->
-          <v-spacer></v-spacer>
-
           <!-- Buttons Section -->
-          <v-btn variant="text" href="/profile">Profile</v-btn>
+          <v-col cols="3" class="d-flex justify-end align-center">
           <v-btn variant="text" href="/admin">Admin Panel</v-btn>
           <v-btn variant="text" href="/">Landing</v-btn>
+          <v-btn variant="text" href="/profile">Profile</v-btn>
           <v-btn variant="text" @click="handleLogout">Logout</v-btn>
+          </v-col>
         </v-row>
       </v-container>
     </v-app-bar>
