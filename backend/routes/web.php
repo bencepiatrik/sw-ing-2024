@@ -3,7 +3,9 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+require __DIR__.'/auth.php';
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,5 +27,6 @@ Route::get('/main', function () {
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-require __DIR__.'/auth.php';
+

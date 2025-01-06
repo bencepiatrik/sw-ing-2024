@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - dev_swing_db:/etc/mysql
+      - ./config/db/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306  # MySQL: http://localhost:3306
     environment:
@@ -75,6 +76,17 @@ services:
       - ./config/php/php.ini:/usr/local/etc/php/php.ini
     networks:
       - sw-ing
+    depends_on:
+      - sw-ing-db
+    command: >
+      sh -c "
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
+      php artisan migrate --force &&
+      php artisan db:seed --force &&
+      php-fpm
+      "
 
   # Frontend - NodeJS
   frontend:

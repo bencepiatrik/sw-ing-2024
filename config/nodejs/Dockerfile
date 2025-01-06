@@ -1,20 +1,17 @@
-FROM node:18.14.2-alpine3.17 as builder-stage
+FROM node:18.14.2-alpine3.17
 
+# Nastavenie pracovného adresára
 WORKDIR /usr/src/frontend
-RUN mkdir /usr/src/frontend/node_modules
-RUN chmod -R 777 /usr/src/frontend/node_modules
 
+# Kopírovanie package.json a inštalácia závislostí
 COPY ./frontend/package*.json ./
 RUN npm install
 
+# Kopírovanie zdrojových súborov
+COPY ./frontend ./
 
-FROM node:16.3.0-alpine
-USER node
+# Exponovanie portu
+EXPOSE 3000
 
-WORKDIR /usr/src/frontend
-COPY --chown=node:node --from=builder-stage /usr/src/frontend/node_modules ./node_modules
-RUN chmod -R 777 /usr/src/frontend/node_modules
-COPY ./frontend .
-
+# Spustenie vývojového servera
 CMD ["npm", "run", "dev"]
-
