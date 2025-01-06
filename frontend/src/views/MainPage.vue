@@ -87,77 +87,87 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import axiosInstance from '../api/axiosInstance'
-import { useAuthStore } from '../stores/authStore'
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import axiosInstance from '../api/axiosInstance';
+import { useAuthStore } from '../stores/authStore';
 
 // Inicializácia routera a authStore
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useAuthStore();
 
 // Reaktívne dáta pre kategórie
-const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([])
+const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
 
 // Reaktívne premenné pre vyhľadávanie, filtrovanie a zoradenie
-const search = ref<string>("")
-const selectedFilters = ref<string[]>([]) // Vybrané hodnoty checkboxov
-const sortOrder = ref<string>("A -> Z (Title)")
+const search = ref<string>('');
+const selectedFilters = ref<string[]>([]); // Vybrané hodnoty checkboxov
+const sortOrder = ref<string>('A -> Z (Title)');
 
 // Funkcia na načítanie kategórií z API
 const fetchCategories = async () => {
   try {
-    const response = await axiosInstance.get('/api/categories')
-    categories.value = response.data
+    const response = await axiosInstance.get('/api/categories');
+    categories.value = response.data;
   } catch (error) {
-    console.error('Error fetching categories:', error)
+    console.error('Error fetching categories:', error);
   }
-}
+};
 
 // Odvodené dáta pre filtrované a zoradené kategórie
 const filteredCategories = computed(() => {
-  let filtered = categories.value
+  let filtered = categories.value;
 
   // Filtrovanie podľa checkboxov
   if (selectedFilters.value.length > 0) {
     filtered = filtered.filter(category =>
       selectedFilters.value.includes(category.name)
-    )
+    );
   }
 
   // Vyhľadávanie podľa textu
   filtered = filtered.filter(category =>
     category.name.toLowerCase().includes(search.value.toLowerCase())
-  )
+  );
 
   // Zoradenie
   switch (sortOrder.value) {
-    case "A -> Z (Title)":
-      return filtered.sort((a, b) => a.name.localeCompare(b.name))
-    case "Z -> A (Title)":
-      return filtered.sort((a, b) => b.name.localeCompare(a.name))
-    case "Najnovší":
-      return filtered.sort((a, b) => b.id - a.id) // Predpokladáme, že `id` reprezentuje čas
-    case "Najstarší":
-      return filtered.sort((a, b) => a.id - b.id)
+    case 'A -> Z (Title)':
+      return filtered.sort((a, b) => a.name.localeCompare(b.name));
+    case 'Z -> A (Title)':
+      return filtered.sort((a, b) => b.name.localeCompare(a.name));
+    case 'Najnovší':
+      return filtered.sort((a, b) => b.id - a.id); // Predpokladáme, že `id` reprezentuje čas
+    case 'Najstarší':
+      return filtered.sort((a, b) => a.id - b.id);
     default:
-      return filtered
+      return filtered;
   }
-})
+});
 
 // Funkcia pre otvorenie detailu kategórie
 const openCategoryPage = (categoryId: number) => {
-  router.push(`/categories/${categoryId}`)
-}
+  router.push(`/categories/${categoryId}`);
+};
 
 // Funkcia pre odhlásenie
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/')
-}
+const handleLogout = async () => {
+  await authStore.logout(); // Počká na dokončenie logout
+  router.push('/'); // Presmeruje na landing page
+};
+
+// Sleduj, či sa stav autentifikácie zmenil
+watch(
+  () => authStore.isAuthenticated,
+  isAuthenticated => {
+    if (!isAuthenticated) {
+      router.push('/'); // Ak používateľ nie je autentifikovaný, presmeruj
+    }
+  }
+);
 
 // Načítanie kategórií po načítaní komponenty
 onMounted(() => {
-  fetchCategories()
-})
+  fetchCategories();
+});
 </script>

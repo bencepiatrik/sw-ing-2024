@@ -21,31 +21,33 @@ RUN docker-php-ext-install pdo pdo_mysql opcache
 # Inštalácia Redis rozšírenia
 RUN pecl install redis && docker-php-ext-enable redis
 
+# Inštalácia Composeru
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Nastavenie pracovného adresára
 WORKDIR /var/www/api
 
 # Konfigurácia PHP
 COPY ./config/php/php.ini /usr/local/etc/php/php.ini
 
-# Inštalácia Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Kopírovanie Composer súborov a inštalácia závislostí
+COPY ./backend/composer.json ./backend/composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Kopírovanie zdrojového kódu
+# Kopírovanie zdrojového kóduc:\xampp\htdocs\sw-ing-copy\frontend\src
 COPY ./backend ./
-COPY ./backend/.env.example ./.env
 
 # Nastavenie oprávnení
-RUN chmod 777 -R ./storage ./bootstrap/cache
+RUN chown -R www-data:www-data ./storage ./bootstrap/cache
+RUN chmod -R 775 ./storage ./bootstrap/cache
 
-# Inštalácia závislostí Laravel
-RUN composer install
-RUN php artisan optimize
+# Optimalizácia Laravel aplikácie
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
 # Exponovanie portu
 EXPOSE 9000
 
-# Spúšťanie PHP-FPM
-CMD /bin/sh -c " \
-          cp -n .env.example .env \
-          && php artisan optimize \
-          && php-fpm"
+# Štart PHP-FPM
+CMD ["php-fpm"]

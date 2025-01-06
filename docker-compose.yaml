@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - dev_swing_db:/etc/mysql
+      - ./config/db/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306  # MySQL: http://localhost:3306
     environment:

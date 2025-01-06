@@ -34,6 +34,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response()->noContent(); // Response with HTTP 204 (No Content)
     }
 }
