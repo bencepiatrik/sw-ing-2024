@@ -76,6 +76,17 @@ services:
       - ./config/php/php.ini:/usr/local/etc/php/php.ini
     networks:
       - sw-ing
+    depends_on:
+      - sw-ing-db
+    command: >
+      sh -c "
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
+      php artisan migrate --force &&
+      php artisan db:seed --force &&
+      php-fpm
+      "
 
   # Frontend - NodeJS
   frontend:
