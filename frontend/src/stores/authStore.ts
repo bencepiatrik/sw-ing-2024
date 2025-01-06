@@ -66,5 +66,24 @@ export const useAuthStore = defineStore('auth', {
         console.error('Error during logout:', error);
       }
     },
+    async updateUser(updatedData) {
+      try {
+        const response = await axios.put('/api/user', updatedData);
+        this.user = response.data;
+        return response.data;
+      } catch (error) {
+        console.error('Failed to update user:', error);
+        throw error;
+      }
+    },
+    async deleteUser() {
+      try {
+        await axios.delete('/api/user');
+        this.user = null;
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+        throw error;
+      }
+    },
   },
 });

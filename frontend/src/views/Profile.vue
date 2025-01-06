@@ -11,7 +11,7 @@ const { user } = storeToRefs(authStore);
 
 // Navigate to the edit profile page
 const goToEditProfile = () => {
-  router.push('/edit-profile');
+  router.push('/editprofile');
 };
 
 // Navigate to the main page
@@ -28,10 +28,10 @@ const goToMainPage = () => {
     <v-row align="center" no-gutters>
       <!-- Logo Section -->
       <v-col cols="1" class="d-flex justify-start align-center">
-        <v-img 
-          :src="'/logo.png'" 
-          contain 
-          style="height: auto; width: auto;" 
+        <v-img
+          :src="'/logo.png'"
+          contain
+          style="height: auto; width: auto;"
         />
       </v-col>
 

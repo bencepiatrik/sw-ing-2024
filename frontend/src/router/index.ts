@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/authStore';
 import Register from "@/views/Register.vue"; // Import the Register component
 import MainPage from "@/views/MainPage.vue";
 import ProfilePage from "@/views/Profile.vue";
+import EditProfilePage from "@/views/EditProfile.vue";
 import CategoryDetail from "@/views/CategoryDetail.vue";
 import Landing from "@/views/Landing.vue";
 import Login from '@/views/Login.vue';
@@ -34,6 +35,12 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/editprofile",
+    name: "EditProfile",
+    component: EditProfilePage,
     meta: { requiresAuth: true },
   },
   {
