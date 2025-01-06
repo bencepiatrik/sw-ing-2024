@@ -21,6 +21,37 @@ const goToMainPage = () => {
 </script>
 
 <template>
+<v-app>
+        <!-- Navbar -->
+        <v-app-bar app color="#2D627F" dark>
+  <v-container fluid>
+    <v-row align="center" no-gutters>
+      <!-- Logo Section -->
+      <v-col cols="1" class="d-flex justify-start align-center">
+        <v-img 
+          :src="'/logo.png'" 
+          contain 
+          style="height: auto; width: auto;" 
+        />
+      </v-col>
+
+      <!-- Title Section -->
+      <v-col cols="8" class="d-flex justify-center align-center">
+        <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
+      </v-col>
+
+      <!-- Spacer for Buttons -->
+      <v-spacer></v-spacer>
+
+      <!-- Buttons Section -->
+      <v-col cols="2" class="d-flex justify-end align-center">
+        <v-btn variant="text" href="/main">Home</v-btn>
+        <v-btn variant="text" href="/profile">Profile</v-btn>
+        <v-btn variant="text" href="/">Landing</v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
+</v-app-bar>
   <div class="profile">
     <div class="profile-editor">
       <div class="profile-card">
@@ -46,10 +77,11 @@ const goToMainPage = () => {
         </div>
       </div>
     </div>
-    <div class="button-mainPage">
+    <!--  <div class="button-mainPage">
       <button @click="goToMainPage">Go to Main Page</button>
-    </div>
+    </div>  -->
   </div>
+</v-app>
 </template>
 
 

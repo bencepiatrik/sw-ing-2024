@@ -1,11 +1,16 @@
 <template>
   <v-app>
-    <!-- App Bar -->
     <v-app-bar app color="#2D627F" dark>
-      <v-img :src="'/logo.png'" contain style="height: 56px; width: auto; margin-left: -530px;" />
-      <v-spacer></v-spacer>
-    </v-app-bar>
-
+      <v-container fluid>
+        <v-row align="center" no-gutters>
+          <!-- Logo Section -->
+          <v-col cols="1" class="d-flex justify-start align-center">
+            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app-bar>  
+    
     <!-- Hero Section -->
     <v-main>
       <v-container>
