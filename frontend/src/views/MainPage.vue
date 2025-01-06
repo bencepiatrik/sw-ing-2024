@@ -1,12 +1,28 @@
 <template>
-  <v-app class="main-container">
-    <v-app-bar app>
-      <v-toolbar-title>Main Page</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn variant="text" href="/profile">Profile</v-btn>
-      <v-btn variant="text" href="/admin">Admin Panel</v-btn>
-      <v-btn variant="text" href="/">Landing</v-btn>
-      <v-btn variant="text" @click="handleLogout">Logout</v-btn>
+ <v-app class="main-container">
+    <v-app-bar app color="#2D627F" dark>
+      <v-container fluid>
+        <v-row align="center" no-gutters>
+          <!-- Logo Section -->
+          <v-col cols="1" class="d-flex justify-start align-center">
+            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
+          </v-col>
+
+          <!-- Title Section -->
+          <v-col cols="8" class="d-flex justify-center align-center">
+            <v-toolbar-title class="text-h6">   Main Page</v-toolbar-title>
+          </v-col>
+
+          <!-- Spacer for Buttons -->
+          <v-spacer></v-spacer>
+
+          <!-- Buttons Section -->
+          <v-btn variant="text" href="/profile">Profile</v-btn>
+          <v-btn variant="text" href="/admin">Admin Panel</v-btn>
+          <v-btn variant="text" href="/">Landing</v-btn>
+          <v-btn variant="text" @click="handleLogout">Logout</v-btn>
+        </v-row>
+      </v-container>
     </v-app-bar>
     <v-main class="text-center pa-8">
       <v-row>
