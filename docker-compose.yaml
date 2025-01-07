@@ -90,6 +90,8 @@ services:
 
   # Frontend - NodeJS
   frontend:
+    depends_on:
+    - api-php
     build:
       context: .
       dockerfile: config/nodejs/Dockerfile

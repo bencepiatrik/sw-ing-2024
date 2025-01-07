@@ -12,4 +12,10 @@ class NewsController extends Controller
         // Retrieve all news entries
         return response()->json(News::all());
     }
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index']);
+    }
+
 }

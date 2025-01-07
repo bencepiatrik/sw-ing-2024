@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
@@ -17,83 +16,87 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Roles First
-        $userRole = new Role();
-        $userRole->name = "user";
-        $userRole->save();
-
-        $reviewerRole = new Role();
-        $reviewerRole->name = "reviewer";
-        $reviewerRole->save();
-
-        $adminRole = new Role();
-        $adminRole->name = "admin";
-        $adminRole->save();
+        // Create Roles
+        $userRole = Role::firstOrCreate(['name' => 'user']);
+        $reviewerRole = Role::firstOrCreate(['name' => 'reviewer']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
         // Create Categories
-        $category = new Category();
-        $category->name = "Category1";
-        $category->description = "Lorem Ipsum description for Category 1";
-        $category->save();
+        $category = Category::firstOrCreate(
+            ['name' => 'Category1'], 
+            ['description' => 'Lorem Ipsum description for Category 1']
+        );
 
-        $category2 = new Category();
-        $category2->name = "Category2";
-        $category2->description = "Lorem Ipsum description for Category 2";
-        $category2->save();
+        $category2 = Category::firstOrCreate(
+            ['name' => 'Category2'], 
+            ['description' => 'Lorem Ipsum description for Category 2']
+        );
 
         // Create Users
-        $user = new User();
-        $user->role_id = $userRole->id; // Use the ID of the saved role
-        $user->name = "test";
-        $user->email = "test@test.test";
-        $user->password = bcrypt("testtest"); // Hashing password
-        $user->save();
+        $user = User::firstOrCreate(
+            ['email' => 'test@test.test'], 
+            [
+                'role_id' => $userRole->id,
+                'name' => 'test',
+                'password' => bcrypt('testtest'),
+            ]
+        );
 
-        $reviewer = new User();
-        $reviewer->role_id = $reviewerRole->id;
-        $reviewer->name = "review";
-        $reviewer->email = "review@review.review";
-        $reviewer->password = bcrypt("testtest");
-        $reviewer->save();
+        $reviewer = User::firstOrCreate(
+            ['email' => 'review@review.review'], 
+            [
+                'role_id' => $reviewerRole->id,
+                'name' => 'review',
+                'password' => bcrypt('testtest'),
+            ]
+        );
 
-        $admin = new User();
-        $admin->role_id = $adminRole->id;
-        $admin->name = "admin";
-        $admin->email = "admin@admin.admin";
-        $admin->password = bcrypt("testtest");
-        $admin->save();
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.admin'], 
+            [
+                'role_id' => $adminRole->id,
+                'name' => 'admin',
+                'password' => bcrypt('testtest'),
+            ]
+        );
 
         // Create Work
-        $work = new Work();
-        $work->title = "Work Title 1";
-        $work->category_id = $category->id;
-        $work->user_id = $user->id;
-        $work->description = "Work description 1";
-        $work->status = 1;
-        $work->save();
+        Work::firstOrCreate(
+            ['title' => 'Work Title 1'],
+            [
+                'category_id' => $category->id,
+                'user_id' => $user->id,
+                'description' => 'Work description 1',
+                'status' => 1,
+            ]
+        );
 
         // Create News
-        $news = new News();
-        $news->title = "Test News 1";
-        $news->text = "This is a test news item.";
-        $news->image_source = "https://example.com/test-image.jpg";
-        $news->link_source = "https://example.com";
-        $news->save();
+        News::firstOrCreate(
+            ['title' => 'Test News 1'], 
+            [
+                'text' => 'This is a test news item.',
+                'image_source' => 'https://example.com/test-image.jpg',
+                'link_source' => 'https://example.com',
+            ]
+        );
 
-        // Create News 2
-        $news = new News();
-        $news->title = "Test News 2";
-        $news->text = "This is a test news item.";
-        $news->image_source = "https://example.com/test-image.jpg";
-        $news->link_source = "https://example.com";
-        $news->save();
+        News::firstOrCreate(
+            ['title' => 'Test News 2'], 
+            [
+                'text' => 'This is a test news item.',
+                'image_source' => 'https://example.com/test-image.jpg',
+                'link_source' => 'https://example.com',
+            ]
+        );
 
-        // Create News 3
-        $news = new News();
-        $news->title = "Test News 3";
-        $news->text = "This is a test news item.";
-        $news->image_source = "https://example.com/test-image.jpg";
-        $news->link_source = "https://example.com";
-        $news->save();
+        News::firstOrCreate(
+            ['title' => 'Test News 3'], 
+            [
+                'text' => 'This is a test news item.',
+                'image_source' => 'https://example.com/test-image.jpg',
+                'link_source' => 'https://example.com',
+            ]
+        );
     }
 }

@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import axiosInstance from "@/api/axiosInstance";
 import { useAuthStore } from "../stores/authStore";
 import { onMounted } from "vue";
@@ -100,6 +101,7 @@ export default {
   methods: {
     async fetchNews() {
       try {
+        await initializeSanctum();
         const response = await axiosInstance.get("/api/news");
         this.news = response.data;
       } catch (error) {
@@ -133,6 +135,11 @@ export default {
     return {};
   },
 };
+
+async function initializeSanctum() {
+    await axios.get('http://localhost:8083/sanctum/csrf-cookie', { withCredentials: true });
+}
+
 </script>
 
 <style scoped>
