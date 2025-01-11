@@ -28,10 +28,25 @@
     <!-- Sidebar + Content Layout -->
     <v-main style="background-color: #D9DCD6;">
       <v-container fluid class="d-flex pa-0">
+
+
         <!-- Sidebar -->
         <v-navigation-drawer app permanent width="80" class="sidebar">
+          <!-- Notifications -->
           <v-list dense>
-            <v-list-item link @click="fetchUsers" class="d-flex justify-center">
+            <v-list-item link height="100" @click="fetchNotification" class="d-flex justify-center">
+              <v-icon large>mdi-alert-circle</v-icon>
+            </v-list-item>
+          </v-list>
+          <!-- Conferencies -->
+          <v-list dense>
+            <v-list-item link height="100" @click="fetchConference" class="d-flex justify-center">
+              <v-icon large>mdi-shape</v-icon>
+            </v-list-item>
+          </v-list>
+          <!-- Users -->
+          <v-list dense>
+            <v-list-item link height="100" @click="fetchUsers" class="d-flex justify-center">
               <v-icon large>mdi-account</v-icon>
             </v-list-item>
           </v-list>
@@ -39,6 +54,22 @@
 
         <!-- Main Content -->
         <v-container fluid class="content-area pa-4">
+          <!-- Conference Table -->
+          <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px;">
+            <v-card-title class="headline text-center">Conferences</v-card-title>
+            <v-btn color="primary" class="mb-4" @click="addConference">
+              Add Conference
+            </v-btn>
+            <v-data-table :headers="headers" :items="conferences" class="elevation-1">
+              <template v-slot:item="{ item }">
+                <tr @click="goToConference(item.id)" style="cursor: pointer;">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.year }}</td>
+                  <td>{{ item.type }}</td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card>
           <!-- User Table -->
           <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px;">
             <v-card-title class="headline text-center">User Management</v-card-title>
@@ -83,11 +114,24 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+const router = useRouter();
 import { ref } from "vue";
 import axiosInstance from "../api/axiosInstance";
 
 // Reactive variables
+const showNotifications = ref(false); // Show conference table toggle
+const showConferences = ref(false); // Show conference table toggle
 const showUsersTable = ref(false); // Show user table toggle
+
+const notification = ref<
+  { id: number; name: string }[]
+>([]);
+
+const conferences = ref<
+  { id: number; name: string; year: number; type: string}[]
+>([]);
+
 const users = ref<
   { id: number; role_id: number; role: string; name: string; email: string }[]
 >([]);
@@ -111,7 +155,43 @@ const handleLogout = () => {
   window.location.href = "/";
 };
 
+const fetchNotification = async () => {
+  showUsersTable.value = false;
+  showConferences.value = false;
+  showNotifications.value = true;
+  try {
+    const response = await axiosInstance.get("/api/notifications");
+    notifications.value = response.data.map((conference: { id: number; name: string;}) => ({
+      ...notification,
+    }));
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+};
+
+const fetchConference = async () => {
+  showNotifications.value = false;
+  showUsersTable.value = false;
+  showConferences.value = true;
+  try {
+    const response = await axiosInstance.get("/api/conferences");
+    conferences.value = response.data.map((conference: { id: number; name: string; year: number; type: string }) => ({
+      ...conference,
+    }));
+  } catch (error) {
+    console.error("Error fetching conferences:", error);
+  }
+};
+
+const goToConference = (conferenceId: number) => {
+  router.push(`/conference/${conferenceId}`);
+};
+
+
+
 const fetchUsers = async () => {
+  showNotifications.value = false;
+  showConferences.value = false;
   showUsersTable.value = true;
   try {
     const response = await axiosInstance.get("/api/users");

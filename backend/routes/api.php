@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConferenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -22,28 +23,44 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
 
-Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
-
-Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController::class, 'getUserWorksByCategory']);
-
-Route::get('/files/download/{fileName}', [FileController::class, 'download']);
-
-Route::get('/categories', [CategoryController::class, 'index']);
-
-Route::get('/categories/{id}', [CategoryController::class, 'show']);
-
-Route::post('/works', [WorkController::class, 'store']);
 
 Route::get('/users', [UserController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {return $request->user();});
 
 Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
 
 Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
 
+Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
+
+
+
+Route::get('/conferences', [ConferenceController::class, 'index']);
+Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
+
+
+
+Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController::class, 'getUserWorksByCategory']);
+
+Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
+
+
+
+Route::get('/categories', [CategoryController::class, 'index']);
+
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
+
+
+
+Route::post('/works', [WorkController::class, 'store']);
+
+Route::get('/files/download/{fileName}', [FileController::class, 'download']);
+
+
 Route::get('/news', [NewsController::class, 'index']);
 
-Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
+
+
+
