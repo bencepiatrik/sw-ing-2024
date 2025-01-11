@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -45,6 +46,28 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully']);
+    }
+
+    public function update(Request $request)
+    {
+        // Získanie aktuálneho prihláseného používateľa
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        // Validácia vstupov
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+    
+        // Aktualizácia údajov používateľa
+        $user->update($validatedData);
+    
+        // Vrátenie odpovede
+        return response()->json($user);
     }
 
 }
