@@ -19,8 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname', // Added surname field
         'email',
         'password',
+        'role_id', // Added role_id to allow mass assignment
     ];
 
     /**
@@ -41,9 +43,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the role associated with the user.
+     */
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
-
 }
