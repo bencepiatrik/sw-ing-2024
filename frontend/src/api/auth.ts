@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 
 export const register = async (data: {
   name: string;
-  surname?: string; // Add optional surname if supported by the backend
+  surname: string; // Add optional surname if supported by the backend
   email: string;
   password: string;
   password_confirmation: string;
