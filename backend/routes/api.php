@@ -64,3 +64,7 @@ Route::get('/departments', [DepartmentController::class, 'getByFaculty']);
 Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']);
 
 Route::get('/notifications', [NotificationController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
+    return $request->user()->notifications;
+});

@@ -15,7 +15,7 @@
 
         <!-- Title Section -->
         <v-col cols="8" class="d-flex justify-center align-center">
-          <v-toolbar-title class="text-h6">My profile</v-toolbar-title>
+          <v-toolbar-title class="text-h6">Moj profil</v-toolbar-title>
         </v-col>
 
         <!-- Spacer for Buttons -->
@@ -23,10 +23,11 @@
 
         <!-- Buttons Section -->
         <v-col cols="3" class="d-flex justify-end align-center">
-          <v-btn variant="text" href="/main">Home</v-btn>
-          <v-btn variant="text" href="/profile">Profile</v-btn>
-          <v-btn variant="text" href="/admin">Admin Panel</v-btn>
           <v-btn variant="text" href="/">Landing</v-btn>
+          <v-btn variant="text" href="/main">Domov</v-btn>
+          <v-btn variant="text" href="/admin" v-if="user && user.role_id === 4">Admin Panel</v-btn>
+          <v-btn variant="text" href="/ziadosti">Ziadosti</v-btn>
+          <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -221,6 +222,11 @@
       // checkRole();
        fetchUniverzity();
      });
+
+     const handleLogout = async () => {
+       await authStore.logout(); // Počká na dokončenie logout
+       router.push('/'); // Presmeruje na landing page
+     };
      </script>
 
 

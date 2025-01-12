@@ -1,118 +1,3 @@
-<template>
- <v-app class="main-container">
-    <v-app-bar app color="#2D627F" dark>
-      <v-container fluid>
-        <v-row align="center" no-gutters>
-          <!-- Logo Section -->
-          <v-col cols="1" class="d-flex justify-start align-center">
-            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
-          </v-col>
-
-          <!-- Title Section -->
-          <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Main Page</v-toolbar-title>
-          </v-col>
-
-          <!-- Buttons Section -->
-          <v-col cols="3" class="d-flex justify-end align-center">
-          <v-btn variant="text" href="/admin">Admin Panel</v-btn>
-          <v-btn variant="text" href="/">Landing</v-btn>
-          <v-btn variant="text" href="/profile">Profile</v-btn>
-          <v-btn variant="text" @click="handleLogout">Logout</v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-app-bar>
-    <v-main class="text-center pa-8">
-      <v-row>
-        <!-- Sidebar na filtrovanie -->
-        <v-col cols="2">
-          <v-card>
-            <v-card-title>Filtrovať</v-card-title>
-            <v-checkbox
-              v-for="filter in ['Category1', 'Skola1', 'Rok1', 'Checkbox']"
-              :key="filter"
-              :label="filter"
-              :value="filter"
-              v-model="selectedFilters"
-            ></v-checkbox>
-          </v-card>
-        </v-col>
-
-        <!-- Hlavný obsah -->
-        <v-col cols="10">
-          <v-row>
-            <!-- Vyhľadávanie -->
-            <v-col cols="8">
-              <v-text-field
-                v-model="search"
-                label="Search"
-                prepend-inner-icon="mdi-magnify"
-              ></v-text-field>
-            </v-col>
-
-            <!-- Zoradenie -->
-            <v-col cols="4">
-              <v-select
-                v-model="sortOrder"
-                label="Select"
-                :items="['A -> Z (Title)', 'Z -> A (Title)', 'Najnovší', 'Najstarší']"
-              ></v-select>
-            </v-col>
-          </v-row>
-
-          <!-- Zoznam kategórií -->
-          <div v-if="!needsWorkplace">
-          <v-expansion-panels>
-            <v-expansion-panel
-              v-for="category in filteredCategories"
-              :key="category.id"
-              class="my-2"
-            >
-              <v-expansion-panel-title style="background-color: #e9efff">
-                <v-row no-gutters>
-                  <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                    {{ category.name }}
-                  </v-col>
-                  <v-col class="d-flex justify-center" cols="6">
-                    {{ category.description }}
-                  </v-col>
-                  <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
-                    Active
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <v-row justify="start" no-gutters>
-                  <v-col class="d-flex justify-center align-center" cols="10">
-                    <p>{{ category.description }}</p>
-                  </v-col>
-                  <v-col class="d-flex justify-center align-center" cols="2">
-                    <v-btn color="primary" @click="openCategoryPage(category.id)">
-                      Open
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
-          </div>
-          <div v-else>
-            <div v-if="needsWorkplace" class="alert alert-warning">
-              <h2>Pozor!</h2>
-              <p>Nemáte vybraté pracovisko.</p>
-              <a href="/profile" class="btn btn-primary">Nastaviť pracovisko</a>
-            </div>
-          </div>
-
-        </v-col>
-      </v-row>
-    </v-main>
-  </v-app>
-
-
-
-</template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
@@ -211,3 +96,121 @@ onMounted(() => {
   fetchCategories();
 });
 </script>
+
+
+<template>
+ <v-app class="main-container">
+    <v-app-bar app color="#2D627F" dark>
+      <v-container fluid>
+        <v-row align="center" no-gutters>
+          <!-- Logo Section -->
+          <v-col cols="1" class="d-flex justify-start align-center">
+            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
+          </v-col>
+
+          <!-- Title Section -->
+          <v-col cols="8" class="d-flex justify-center align-center">
+            <v-toolbar-title class="text-h6">Main Page</v-toolbar-title>
+          </v-col>
+
+          <!-- Buttons Section -->
+          <v-col cols="3" class="d-flex justify-end align-center">
+          <v-btn variant="text" href="/admin" v-if="user && user.role_id === 4">Admin Panel</v-btn>
+          <v-btn variant="text" href="/">Landing</v-btn>
+          <v-btn variant="text" href="/profile">Profil</v-btn>
+          <v-btn variant="text" href="/ziadosti">Ziadosti</v-btn>
+          <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app-bar>
+    <v-main class="text-center pa-8">
+      <v-row>
+        <!-- Sidebar na filtrovanie -->
+        <v-col cols="2">
+          <v-card>
+            <v-card-title>Filtrovať</v-card-title>
+            <v-checkbox
+              v-for="filter in ['Category1', 'Skola1', 'Rok1', 'Checkbox']"
+              :key="filter"
+              :label="filter"
+              :value="filter"
+              v-model="selectedFilters"
+            ></v-checkbox>
+          </v-card>
+        </v-col>
+
+        <!-- Hlavný obsah -->
+        <v-col cols="10">
+          <v-row>
+            <!-- Vyhľadávanie -->
+            <v-col cols="8">
+              <v-text-field
+                v-model="search"
+                label="Search"
+                prepend-inner-icon="mdi-magnify"
+              ></v-text-field>
+            </v-col>
+
+            <!-- Zoradenie -->
+            <v-col cols="4">
+              <v-select
+                v-model="sortOrder"
+                label="Select"
+                :items="['A -> Z (Title)', 'Z -> A (Title)', 'Najnovší', 'Najstarší']"
+              ></v-select>
+            </v-col>
+          </v-row>
+
+          <!-- Zoznam kategórií -->
+          <div v-if="!needsWorkplace">
+          <v-expansion-panels>
+            <v-expansion-panel
+              v-for="category in filteredCategories"
+              :key="category.id"
+              class="my-2"
+            >
+              <v-expansion-panel-title style="background-color: #e9efff">
+                <v-row no-gutters>
+                  <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
+                    {{ category.name }}
+                  </v-col>
+                  <v-col class="d-flex justify-center" cols="6">
+                    {{ category.description }}
+                  </v-col>
+                  <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
+                    Active
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-row justify="start" no-gutters>
+                  <v-col class="d-flex justify-center align-center" cols="10">
+                    <p>{{ category.description }}</p>
+                  </v-col>
+                  <v-col class="d-flex justify-center align-center" cols="2">
+                    <v-btn color="primary" @click="openCategoryPage(category.id)">
+                      Open
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          </div>
+          <div v-else>
+            <div v-if="needsWorkplace" class="alert alert-warning">
+              <h2>Pozor!</h2>
+              <p>Nemáte vybraté pracovisko.</p>
+              <a href="/profile" class="btn btn-primary">Nastaviť pracovisko</a>
+            </div>
+          </div>
+
+        </v-col>
+      </v-row>
+    </v-main>
+  </v-app>
+
+
+
+</template>

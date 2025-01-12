@@ -9,6 +9,7 @@ import CategoryDetail from "@/views/CategoryDetail.vue";
 import Landing from "@/views/Landing.vue";
 import Login from '@/views/Login.vue';
 import AdminPage from "@/views/AdminPage.vue";
+import Notifications from "@/views/Notifications.vue";
 
 const routes = [
   {
@@ -61,6 +62,12 @@ const routes = [
     path: "/admin",
     name: "Admin",
     component: AdminPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/ziadosti",
+    name: "Notifications",
+    component: Notifications,
     meta: { requiresAuth: true },
   },
 ];
