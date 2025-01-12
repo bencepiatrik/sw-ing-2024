@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axiosInstance from '../api/axiosInstance';
@@ -36,20 +35,13 @@ onMounted(fetchNotifications);
         <v-row align="center" no-gutters>
           <!-- Logo Section -->
           <v-col cols="1" class="d-flex justify-start align-center">
-            <v-img
-              :src="'/logo.png'"
-              contain
-              style="height: auto; width: auto;"
-            />
+            <v-img :src="'/logo.png'" contain style="height: auto; width: auto;" />
           </v-col>
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
             <v-toolbar-title class="text-h6">Moj profil</v-toolbar-title>
           </v-col>
-
-          <!-- Spacer for Buttons -->
-          <v-spacer></v-spacer>
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
@@ -66,8 +58,8 @@ onMounted(fetchNotifications);
       <v-card elevation="2" class="pa-4" style="border-radius: 10px;">
         <v-card-title class="headline text-center">Your Notifications</v-card-title>
         <v-data-table :headers="headers" :items="notifications" class="elevation-1" dense>
-          <template v-slot:item="{ item }">
-            <tr>
+          <template v-slot:body="{ items }">
+            <tr v-for="item in items" :key="item.id">
               <td>{{ item.type }}</td>
               <td>{{ item.state }}</td>
               <td>{{ new Date(item.created_at).toLocaleString() }}</td>
@@ -78,4 +70,3 @@ onMounted(fetchNotifications);
     </v-container>
   </v-app>
 </template>
-

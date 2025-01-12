@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="background-color: #D9DCD6;">
     <!-- Navbar -->
     <v-app-bar app color="#2D627F" dark>
       <v-container fluid>
@@ -26,7 +26,7 @@
     </v-app-bar>
 
     <!-- Sidebar + Content Layout -->
-    <v-main style="background-color: #D9DCD6;">
+    <v-main fluid class="pa-4" style="background-color: #D9DCD6;">
       <v-container fluid class="d-flex pa-0">
 
 
@@ -35,7 +35,7 @@
           <!-- Notifications -->
           <v-list dense>
             <v-list-item link height="100" @click="fetchNotifications" class="d-flex justify-center">
-              <v-icon large>mdi-alert-circle</v-icon>
+              <v-icon large>mdi-bell</v-icon>
             </v-list-item>
           </v-list>
           <!-- Conferencies -->
@@ -53,9 +53,9 @@
         </v-navigation-drawer>
 
         <!-- Main Content -->
-        <v-container v-if="showNotifications" fluid class="content-area pa-4">
-          <v-card elevation="2" class="pa-4" style="border-radius: 10px;">
-            <v-card-title class="headline text-center">Notifications</v-card-title>
+        <v-container v-if="showNotifications" style="width: 70vw;">
+          <v-card elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
+            <v-card-title class="headline text-center">Notifikácie</v-card-title>
             <v-data-table :headers="notificationHeaders" :items="notifications" class="elevation-1">
               <template v-slot:item="{ item }">
                 <tr>
@@ -66,84 +66,76 @@
                   <td>{{ item.department }}</td>
                   <td>{{ item.state }}</td>
                   <td>{{ new Date(item.created_at).toLocaleString() }}</td>
-                  <td class="d-flex justify-end">
-                    <v-btn
-                      color="green"
-                      dark
-                      class="mx-2"
-                      v-if="item.state === 'sent'"
-                      @click="updateNotificationState(item, 'accepted')"
-                    >
-                      Accept
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      dark
-                      class="mx-2"
-                      v-if="item.state === 'sent'"
-                      @click="updateNotificationState(item, 'declined')"
-                    >
-                      Decline
-                    </v-btn>
-                  </td>
-                </tr>
-              </template>
-
-            </v-data-table>
-          </v-card>
-          <!-- Conference Table -->
-          <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px;">
-            <v-card-title class="headline text-center">Conferences</v-card-title>
-            <v-btn color="primary" class="mb-4" @click="CreateConference">
-              Add Conference
-            </v-btn>
-            <v-data-table :headers="headers" :items="conferences" class="elevation-1">
-              <template v-slot:item="{ item }">
-                <tr @click="goToConference(item.id)" style="cursor: pointer;">
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.year }}</td>
-                  <td>{{ item.type }}</td>
-                </tr>
-              </template>
-            </v-data-table>
-          </v-card>
-          <!-- User Table -->
-          <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px;">
-            <v-card-title class="headline text-center">User Management</v-card-title>
-            <v-data-table :headers="headers" :items="users" class="elevation-1">
-              <template v-slot:item="{ item }">
-                <tr>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.email }}</td>
-                  <td>{{ item.role }}</td>
-                  <td class="d-flex justify-end">
-                    <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
-                      Change Role
-                    </v-btn>
-                    <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
-                      Delete
-                    </v-btn>
+                  <td class="text-center">
+                    <div class="d-flex justify-center">
+                      <v-btn color="green" dark class="mx-2" v-if="item.state === 'sent'"
+                        @click="updateNotificationState(item, 'accepted')">
+                        Akceptovať
+                      </v-btn>
+                      <v-btn color="red" dark class="mx-2" v-if="item.state === 'sent'"
+                        @click="updateNotificationState(item, 'declined')">
+                        Zrušiť
+                      </v-btn>
+                    </div>
                   </td>
                 </tr>
               </template>
             </v-data-table>
           </v-card>
         </v-container>
+
+        <!-- Conference Table -->
+        <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
+          <v-card-title class="headline text-center">Konferencie</v-card-title>
+          <v-btn color="primary" class="mb-4" @click="CreateConference">
+            Pridať konferenciu
+          </v-btn>
+          <v-data-table :headers="headers" :items="conferences" class="elevation-1">
+            <template v-slot:item="{ item }">
+              <tr @click="goToConference(item.id)" style="cursor: pointer;">
+                <td>{{ item.name }}</td>
+                <td>{{ item.year }}</td>
+                <td>{{ item.type }}</td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-card>
+        <!-- User Table -->
+        <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
+          <v-card-title class="headline text-center">Správanie použivatelov</v-card-title>
+          <v-data-table :headers="headers" :items="users" class="elevation-1">
+            <template v-slot:item="{ item }">
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.role }}</td>
+                <td class="d-flex justify-end">
+                  <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
+                    Zmena roly
+                  </v-btn>
+                  <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
+                    Vymazať
+                  </v-btn>
+                </td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-container>
     </v-main>
 
     <!-- Change Role Dialog -->
     <v-dialog v-model="showChangeRoleDialog" max-width="400">
       <v-card>
-        <v-card-title class="headline">Change Role</v-card-title>
+        <v-card-title class="headline">Zmena roly</v-card-title>
         <v-card-text>
           <v-select v-model="selectedRole" :items="roles" label="Select Role" item-text="name" item-value="name">
           </v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" @click="confirmChangeRole">Save</v-btn>
-          <v-btn color="red darken-1" @click="closeDialog">Cancel</v-btn>
+          <v-btn color="blue darken-1" @click="confirmChangeRole">Uložiť</v-btn>
+          <v-btn color="red darken-1" @click="closeDialog">Zrušiť</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -178,7 +170,7 @@ const notification = ref<
 >([]);
 
 const conferences = ref<
-  { id: number; name: string; year: number; type: string}[]
+  { id: number; name: string; year: number; type: string }[]
 >([]);
 
 const users = ref<
@@ -205,19 +197,19 @@ const handleLogout = () => {
 };
 //const notifications = ref([]);
 const notificationHeaders = [
-    { text: "Type", value: "type" },
-    { text: "User Email", value: "user_email" },
-    { text: "University", value: "university" },
-    { text: "Faculty", value: "faculty" },
-    { text: "Department", value: "department" },
-    { text: "State", value: "state" },
-    { text: "Created At", value: "created_at" },
-    { text: "Actions", value: "actions", sortable: false },
-  ]
+  { text: "Type", value: "type" },
+  { text: "User Email", value: "user_email" },
+  { text: "University", value: "university" },
+  { text: "Faculty", value: "faculty" },
+  { text: "Department", value: "department" },
+  { text: "State", value: "state" },
+  { text: "Created At", value: "created_at" },
+  { text: "Actions", value: "actions", sortable: false },
+]
 
 
 
-  const fetchNotifications = async () => {
+const fetchNotifications = async () => {
   showUsersTable.value = false;
   showConferences.value = false;
   showNotifications.value = true;
@@ -229,7 +221,7 @@ const notificationHeaders = [
   } catch (error) {
     console.error("Error fetching notifications:", error);
   }
-  };
+};
 
 const fetchConferences = async () => {
   showNotifications.value = false;
@@ -346,5 +338,20 @@ const updateNotificationState = async (notification, newState) => {
 .v-data-table {
   border-radius: 10px;
   overflow: hidden;
+}
+
+content-section {
+  width: 70vw;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-card {
+  width: 100%;
+  max-width: 60vw;
+  margin: 0 auto;
+  border-radius: 10px;
 }
 </style>
