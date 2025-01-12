@@ -5,6 +5,30 @@ import { useRouter } from 'vue-router';
 import axiosInstance from '../api/axiosInstance';
 import { useAuthStore } from '../stores/authStore';
 
+export interface Conference {
+  id: number;
+  name: string;
+  year: number;
+  type: string;
+  department_id: number;
+  expiration_date: string;
+  created_at: string;
+  updated_at: string;
+  department?: {
+    id: number;
+    name: string;
+  };
+  publications?: Array<{
+    id: number;
+    title: string;
+    content: string;
+    conference_id: number;
+    created_at: string;
+    updated_at: string;
+  }>;
+}
+
+
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
 const router = useRouter();
@@ -15,20 +39,16 @@ const needsWorkplace = computed(() => {
   return !user.value?.departments || user.value.departments.length === 0;
 });
 
-const conferences = ref([]);
+const conferences = ref<Conference[]>([]);
 
 const fetchConferences = async () => {
-  if (user.value?.departments?.length) {
-    const departmentId = user.value.departments[0].pivot.department_id; // Extract department_id
+    const departmentId = user.value?.departments[0].pivot.department_id;
     try {
       const response = await axiosInstance.get(`/api/conferences/${departmentId}`);
       conferences.value = response.data;
     } catch (error) {
       console.error('Error fetching conferences:', error);
     }
-  } else {
-    needsWorkplace.value = true;
-  }
 };
 
 

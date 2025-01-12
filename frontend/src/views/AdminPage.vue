@@ -156,6 +156,18 @@ const router = useRouter();
 import { ref } from "vue";
 import axiosInstance from "../api/axiosInstance";
 
+type NotificationItem = {
+  type: string;
+  user_email: string;
+  university: string;
+  faculty: string;
+  department: string;
+  state: string;
+  created_at: string;
+};
+
+const notifications = ref<NotificationItem[]>([]);
+
 // Reactive variables
 const showNotifications = ref(false); // Show conference table toggle
 const showConferences = ref(false); // Show conference table toggle
@@ -191,7 +203,7 @@ const handleLogout = () => {
   sessionStorage.removeItem("user");
   window.location.href = "/";
 };
-const notifications = ref([]);
+//const notifications = ref([]);
 const notificationHeaders = [
     { text: "Type", value: "type" },
     { text: "User Email", value: "user_email" },
@@ -219,8 +231,6 @@ const notificationHeaders = [
   }
   };
 
-
-
 const fetchConference = async () => {
   showNotifications.value = false;
   showUsersTable.value = false;
@@ -238,8 +248,6 @@ const fetchConference = async () => {
 const goToConference = (conferenceId: number) => {
   router.push(`/conference/${conferenceId}`);
 };
-
-
 
 const fetchUsers = async () => {
   showNotifications.value = false;
