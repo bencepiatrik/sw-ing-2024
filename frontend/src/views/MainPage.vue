@@ -62,6 +62,7 @@
           </v-row>
 
           <!-- Zoznam kategórií -->
+          <div v-if="!needsWorkplace">
           <v-expansion-panels>
             <v-expansion-panel
               v-for="category in filteredCategories"
@@ -95,10 +96,22 @@
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
+          </div>
+          <div v-else>
+            <div v-if="needsWorkplace" class="alert alert-warning">
+              <h2>Pozor!</h2>
+              <p>Nemáte vybraté pracovisko.</p>
+              <a href="/profile" class="btn btn-primary">Nastaviť pracovisko</a>
+            </div>
+          </div>
+
         </v-col>
       </v-row>
     </v-main>
   </v-app>
+
+
+
 </template>
 
 <script setup lang="ts">
@@ -108,8 +121,20 @@ import axiosInstance from '../api/axiosInstance';
 import { useAuthStore } from '../stores/authStore';
 
 // Inicializácia routera a authStore
+import { storeToRefs } from 'pinia';
 const router = useRouter();
 const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
+
+const needsWorkplace = computed(() => {
+  return !user.value?.departments || user.value.departments.length === 0;
+});
+if (!needsWorkplace.value) {
+  // Fetch data from the database
+  //console.log("ma pracovisko")
+} else {
+  //console.log("nema pracovisko")
+}
 
 // Reaktívne dáta pre kategórie
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);

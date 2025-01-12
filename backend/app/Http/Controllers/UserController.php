@@ -52,22 +52,43 @@ class UserController extends Controller
     {
         // Získanie aktuálneho prihláseného používateľa
         $user = Auth::user();
-    
+
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         // Validácia vstupov
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
-    
+
         // Aktualizácia údajov používateľa
         $user->update($validatedData);
-    
+
         // Vrátenie odpovede
         return response()->json($user);
     }
+
+    public function updateUser(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            $validatedData = $request->validate([
+                'name' => 'string|max:255',
+                'surname' => 'string|max:255',
+                'email' => 'string|email|max:255|unique:users,email,' . $user->id,
+            ]);
+
+            $user->update($validatedData);
+
+            return response()->json(['message' => 'User updated successfully', 'user' => $user]);
+        } catch (\Exception $e) {
+            \Log::error('Update User Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+
 
 }

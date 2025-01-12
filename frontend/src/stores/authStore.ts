@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async updateUser(updatedData) {
       try {
-        const response = await axios.put('/api/user', updatedData);
+        const response = await axiosInstance.put('/api/user', updatedData);
         this.user = response.data;
         return response.data;
       } catch (error) {

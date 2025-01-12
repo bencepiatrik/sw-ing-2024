@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\UniversityController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,44 +25,36 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 |
 */
 
-
-
-Route::get('/users', [UserController::class, 'index']);
-
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {return $request->user();});
-
-Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
-
-Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-
-Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
-
-
-
-Route::get('/conferences', [ConferenceController::class, 'index']);
-Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
-
-
-
-Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController::class, 'getUserWorksByCategory']);
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    $user = $request->user();
+    $user->load('role', 'departments');
+    return $user;
+});
 
 Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
 
+Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController::class, 'getUserWorksByCategory']);
 
+Route::get('/files/download/{fileName}', [FileController::class, 'download']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
-
-
 Route::post('/works', [WorkController::class, 'store']);
 
-Route::get('/files/download/{fileName}', [FileController::class, 'download']);
+Route::get('/users', [UserController::class, 'index']);
 
+Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
+
+Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
 
 Route::get('/news', [NewsController::class, 'index']);
 
+Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
 
+Route::get('/universities', [UniversityController::class, 'index']);
 
+Route::get('/faculties', [FacultyController::class, 'getByUniversity']);
 
+Route::get('/departments', [DepartmentController::class, 'getByFaculty']);

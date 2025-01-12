@@ -4,6 +4,7 @@ import Register from "@/views/Register.vue"; // Import the Register component
 import MainPage from "@/views/MainPage.vue";
 import ProfilePage from "@/views/Profile.vue";
 import EditProfilePage from "@/views/EditProfile.vue";
+import EditWorkplace from "@/views/EditWorkplace.vue";
 import CategoryDetail from "@/views/CategoryDetail.vue";
 import Landing from "@/views/Landing.vue";
 import Login from '@/views/Login.vue';
@@ -44,11 +45,17 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/editworkplace",
+    name: "EditWorkplace",
+    component: EditWorkplace,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/categories/:id",
     name: "CategoryDetail",
     component: CategoryDetail,
     meta: { requiresAuth: true },
-    props: true, // Odovzdáva ID ako prop do komponenty
+    props: true,
   },
   {
     path: "/admin",

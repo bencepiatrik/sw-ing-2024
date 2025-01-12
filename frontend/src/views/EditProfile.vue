@@ -46,14 +46,14 @@ const goToProfile = () => {
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Edit Profile</v-toolbar-title>
+            <v-toolbar-title class="text-h6">Zmeniť Profil</v-toolbar-title>
           </v-col>
 
           <!-- Spacer for Buttons -->
           <v-spacer></v-spacer>
 
           <!-- Buttons Section -->
-          <v-btn variant="text" href="/profile">Profile</v-btn>
+          <v-btn variant="text" href="/profile">Profil</v-btn>
         </v-row>
       </v-container>
     </v-app-bar>
@@ -61,15 +61,19 @@ const goToProfile = () => {
     <div class="profile">
       <div class="profile-editor">
         <div class="profile-card">
-          <h1>Edit Profile</h1>
+          <h1>Zmeniť Profil</h1>
           <form @submit.prevent="saveProfile"> <!-- Bence ez nem megy -->
             <div>
-              <label for="name">Name</label>
-              <input id="name" v-model="user.name" type="text" placeholder="Enter your name" />
+              <label for="name">Meno</label>
+              <input id="name" v-model="user.name" type="text" placeholder="meno..." />
+            </div>
+            <div>
+              <label for="name">Priezvisko</label>
+              <input id="name" v-model="user.surname" type="text" placeholder="priezvisko..." />
             </div>
             <div>
               <label for="email">Email</label>
-              <input id="email" v-model="user.email" type="email" placeholder="Enter your email" />
+              <input id="email" v-model="user.email" type="email" placeholder="email..." />
             </div>
             <div class="button-container">
               <button type="submit">Save</button>
