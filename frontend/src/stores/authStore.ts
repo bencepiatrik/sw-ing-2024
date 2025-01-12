@@ -7,10 +7,19 @@ interface User {
   id: number;
   name: string;
   email: string;
+  role_id: number;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
+  departments: Department[];
 }
+
+interface Department {
+  pivot: {
+    department_id: number;
+  };
+}
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({

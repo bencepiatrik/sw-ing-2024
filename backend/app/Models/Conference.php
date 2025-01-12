@@ -29,4 +29,9 @@ class Conference extends Model
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
+
+    public function publications()
+    {
+        return $this->hasMany(Publication::class);
+    }
 }

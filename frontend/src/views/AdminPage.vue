@@ -16,10 +16,10 @@
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn href="/main">Home</v-btn>
-            <v-btn href="/profile">Profile</v-btn>
+            <v-btn href="/main">Domov</v-btn>
+            <v-btn href="/profile">Profil</v-btn>
             <v-btn href="/">Landing</v-btn>
-            <v-btn @click="handleLogout">Logout</v-btn>
+            <v-btn @click="handleLogout">Odhlasit sa</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -40,7 +40,7 @@
           </v-list>
           <!-- Conferencies -->
           <v-list dense>
-            <v-list-item link height="100" @click="fetchConference" class="d-flex justify-center">
+            <v-list-item link height="100" @click="fetchConferences" class="d-flex justify-center">
               <v-icon large>mdi-shape</v-icon>
             </v-list-item>
           </v-list>
@@ -94,7 +94,7 @@
           <!-- Conference Table -->
           <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px;">
             <v-card-title class="headline text-center">Conferences</v-card-title>
-            <v-btn color="primary" class="mb-4" @click="addConference">
+            <v-btn color="primary" class="mb-4" @click="CreateConference">
               Add Conference
             </v-btn>
             <v-data-table :headers="headers" :items="conferences" class="elevation-1">
@@ -156,6 +156,18 @@ const router = useRouter();
 import { ref } from "vue";
 import axiosInstance from "../api/axiosInstance";
 
+type NotificationItem = {
+  type: string;
+  user_email: string;
+  university: string;
+  faculty: string;
+  department: string;
+  state: string;
+  created_at: string;
+};
+
+const notifications = ref<NotificationItem[]>([]);
+
 // Reactive variables
 const showNotifications = ref(false); // Show conference table toggle
 const showConferences = ref(false); // Show conference table toggle
@@ -191,7 +203,7 @@ const handleLogout = () => {
   sessionStorage.removeItem("user");
   window.location.href = "/";
 };
-const notifications = ref([]);
+//const notifications = ref([]);
 const notificationHeaders = [
     { text: "Type", value: "type" },
     { text: "User Email", value: "user_email" },
@@ -219,9 +231,7 @@ const notificationHeaders = [
   }
   };
 
-
-
-const fetchConference = async () => {
+const fetchConferences = async () => {
   showNotifications.value = false;
   showUsersTable.value = false;
   showConferences.value = true;
@@ -238,8 +248,6 @@ const fetchConference = async () => {
 const goToConference = (conferenceId: number) => {
   router.push(`/conference/${conferenceId}`);
 };
-
-
 
 const fetchUsers = async () => {
   showNotifications.value = false;
@@ -258,11 +266,17 @@ const fetchUsers = async () => {
 
 const mapRoleIdToRole = (role_id: number): string => {
   const roles = {
-    1: "user",
-    2: "reviewer",
-    3: "admin",
+    1: "neschvaleny pouzivatel",
+    2: "schvaleny pouzivatel",
+    3: "autor",
+    4: "recenzent",
+    5: "admin",
   };
   return roles[role_id] || "unknown";
+};
+
+const CreateConference = () => {
+  router.push('/createconference');
 };
 
 

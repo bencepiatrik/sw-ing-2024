@@ -1,108 +1,115 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
-import Register from "@/views/Register.vue"; // Import the Register component
-import MainPage from "@/views/MainPage.vue";
-import ProfilePage from "@/views/Profile.vue";
-import EditProfilePage from "@/views/EditProfile.vue";
-import EditWorkplace from "@/views/EditWorkplace.vue";
-import CategoryDetail from "@/views/CategoryDetail.vue";
-import Landing from "@/views/Landing.vue";
-import Login from '@/views/Login.vue';
-import AdminPage from "@/views/AdminPage.vue";
-import Notifications from "@/views/Notifications.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+import Register from '@/views/Register.vue' // Import the Register component
+import MainPage from '@/views/MainPage.vue'
+import ProfilePage from '@/views/Profile.vue'
+import EditProfilePage from '@/views/EditProfile.vue'
+import EditWorkplace from '@/views/EditWorkplace.vue'
+import CategoryDetail from '@/views/CategoryDetail.vue'
+import Landing from '@/views/Landing.vue'
+import Login from '@/views/Login.vue'
+import AdminPage from '@/views/AdminPage.vue'
+import Notifications from '@/views/Notifications.vue'
+import CreateConference from '@/views/CreateConference.vue'
 
 const routes = [
   {
-    path: "/",
-    name: "Landing",
-    component: Landing,
+    path: '/',
+    name: 'Landing',
+    component: Landing
   },
   {
     path: '/login',
-    name: "Login",
+    name: 'Login',
     component: Login
   },
   {
-    path: "/register",
-    name: "Register",
+    path: '/register',
+    name: 'Register',
     component: Register
   },
   {
-    path: "/main",
-    name: "MainPage",
+    path: '/main',
+    name: 'MainPage',
     component: MainPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
-    path: "/profile",
-    name: "Profile",
+    path: '/profile',
+    name: 'Profile',
     component: ProfilePage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
-    path: "/editprofile",
-    name: "EditProfile",
+    path: '/editprofile',
+    name: 'EditProfile',
     component: EditProfilePage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
-    path: "/editworkplace",
-    name: "EditWorkplace",
+    path: '/editworkplace',
+    name: 'EditWorkplace',
     component: EditWorkplace,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
-    path: "/categories/:id",
-    name: "CategoryDetail",
+    path: '/categories/:id',
+    name: 'CategoryDetail',
     component: CategoryDetail,
     meta: { requiresAuth: true },
-    props: true,
+    props: true
   },
   {
-    path: "/admin",
-    name: "Admin",
+    path: '/admin',
+    name: 'Admin',
     component: AdminPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
-    path: "/ziadosti",
-    name: "Notifications",
-    component: Notifications,
-    meta: { requiresAuth: true },
+    path: '/createconference',
+    name: 'CreateConference',
+    component: CreateConference,
+    meta: { requiresAuth: true }
   },
-];
+
+  {
+    path: '/ziadosti',
+    name: 'Notifications',
+    component: Notifications,
+    meta: { requiresAuth: true }
+  }
+]
+
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
-});
+  routes
+})
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   // If user is authenticated and trying to access guest-only pages
   if (authStore.isAuthenticated && ['/login', '/register', '/'].includes(to.path)) {
-    return next('/main'); // Redirect to main page and stop further execution
+    return next('/main') // Redirect to main page and stop further execution
   }
 
   // If the route requires authentication and the user is not logged in
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return next('/'); // Redirect to landing page and stop further execution
+    return next('/') // Redirect to landing page and stop further execution
   }
 
   // Allow navigation otherwise
-  next();
-});
-
-
+  next()
+})
 
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({ name: "Login" }); // Redirect to login if not authenticated
+    next({ name: 'Login' }) // Redirect to login if not authenticated
   } else {
-    next(); // Proceed to the route
+    next() // Proceed to the route
   }
-});
-export default router;
+})
+export default router
