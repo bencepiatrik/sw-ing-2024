@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -42,6 +41,8 @@ const needsWorkplace = computed(() => {
 const conferences = ref<Conference[]>([]);
 
 const fetchConferences = async () => {
+  if (user.value && user.value.departments && user.value.departments.length) {
+
     const departmentId = user.value?.departments[0].pivot.department_id;
     try {
       const response = await axiosInstance.get(`/api/conferences/${departmentId}`);
@@ -49,6 +50,7 @@ const fetchConferences = async () => {
     } catch (error) {
       console.error('Error fetching conferences:', error);
     }
+  }
 };
 
 
@@ -122,19 +124,22 @@ watch(
   }
 );
 
-if (!needsWorkplace.value) {
-  // Fetch data from the database
-  //console.log("ma pracovisko")
-  fetchConferences();
+watch(
+  () => user.value,
+  (newUser) => {
+    if (newUser && newUser.departments && newUser.departments.length) {
+      fetchConferences();
+    }
+  },
+  { immediate: true }
+);
 
-} else {
-  //console.log("nema pracovisko")
-}
 
-// Načítanie kategórií po načítaní komponenty
-onMounted(() => {
-  //fetchCategories();
-
+onMounted(async () => {
+  if (!user.value) {
+    await authStore.initialize();
+  }
+  //fetchConferences();
 });
 </script>
 

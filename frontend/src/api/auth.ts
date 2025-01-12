@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 
 export const register = async (data: {
   name: string;
-  surname: string; // Add optional surname if supported by the backend
+  surname: string;
   email: string;
   password: string;
   password_confirmation: string;
@@ -18,7 +18,6 @@ export const login = async (email: string, password: string) => {
 
   // Send login request
   const response = await axiosInstance.post('/login', { email, password });
-  console.log(response.data)
   return response.data;
 };
 
