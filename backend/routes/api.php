@@ -28,11 +28,36 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 |
 */
 
+//users
+Route::get('/users', [UserController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     $user = $request->user();
     $user->load('role', 'departments');
     return $user;
 });
+
+//Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
+
+Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
+
+Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
+
+
+//conferences
+Route::get('/conferences', [ConferenceController::class, 'index']);
+
+Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
+
+Route::get('/createconference', [ConferenceController::class, 'index']);
+
+
+//works / publifications
+Route::post('/works', [WorkController::class, 'store']);
 
 Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
 
@@ -40,22 +65,28 @@ Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController
 
 Route::get('/files/download/{fileName}', [FileController::class, 'download']);
 
+
+//categories
 Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
-Route::post('/works', [WorkController::class, 'store']);
 
-Route::get('/users', [UserController::class, 'index']);
-
-Route::post('/users/{id}/change-role', [UserController::class, 'changeRole']);
-
-Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-
+//news
 Route::get('/news', [NewsController::class, 'index']);
 
-Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.logout');
 
+//notifications
+Route::get('/notifications', [NotificationController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [NotificationController::class, 'updateState']);
+
+Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
+    return $request->user()->notifications;
+});
+
+
+//places
 Route::get('/universities', [UniversityController::class, 'index']);
 
 Route::get('/faculties', [FacultyController::class, 'getByUniversity']);
@@ -63,13 +94,3 @@ Route::get('/faculties', [FacultyController::class, 'getByUniversity']);
 Route::get('/departments', [DepartmentController::class, 'getByFaculty']);
 
 Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']);
-
-Route::get('/notifications', [NotificationController::class, 'index']);
-
-Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
-    return $request->user()->notifications;
-});
-
-Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [NotificationController::class, 'updateState']);
-
-Route::get('/conferences/{id}', [ConferenceController::class, 'findForUser']);
