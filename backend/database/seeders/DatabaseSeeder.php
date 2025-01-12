@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             DepartmentsSeeder::class,
             ConferenceSeeder::class,
             PublicationSeeder::class,
-            NotificationSeeder::class
+            NotificationSeeder::class,
+            DepartmentUserSeeder::class,
         ]);
     }
 }

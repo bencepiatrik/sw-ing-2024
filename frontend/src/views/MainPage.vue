@@ -14,12 +14,23 @@ const { user } = storeToRefs(authStore);
 const needsWorkplace = computed(() => {
   return !user.value?.departments || user.value.departments.length === 0;
 });
-if (!needsWorkplace.value) {
-  // Fetch data from the database
-  //console.log("ma pracovisko")
-} else {
-  //console.log("nema pracovisko")
-}
+
+const conferences = ref([]);
+
+const fetchConferences = async () => {
+  if (user.value?.departments?.length) {
+    const departmentId = user.value.departments[0].pivot.department_id; // Extract department_id
+    try {
+      const response = await axiosInstance.get(`/api/conferences/${departmentId}`);
+      conferences.value = response.data;
+    } catch (error) {
+      console.error('Error fetching conferences:', error);
+    }
+  } else {
+    needsWorkplace.value = true;
+  }
+};
+
 
 // Reaktívne dáta pre kategórie
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
@@ -91,9 +102,19 @@ watch(
   }
 );
 
+if (!needsWorkplace.value) {
+  // Fetch data from the database
+  //console.log("ma pracovisko")
+  fetchConferences();
+
+} else {
+  //console.log("nema pracovisko")
+}
+
 // Načítanie kategórií po načítaní komponenty
 onMounted(() => {
-  fetchCategories();
+  //fetchCategories();
+
 });
 </script>
 
@@ -164,47 +185,48 @@ onMounted(() => {
 
           <!-- Zoznam kategórií -->
           <div v-if="!needsWorkplace">
-          <v-expansion-panels>
-            <v-expansion-panel
-              v-for="category in filteredCategories"
-              :key="category.id"
-              class="my-2"
-            >
-              <v-expansion-panel-title style="background-color: #e9efff">
-                <v-row no-gutters>
-                  <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                    {{ category.name }}
-                  </v-col>
-                  <v-col class="d-flex justify-center" cols="6">
-                    {{ category.description }}
-                  </v-col>
-                  <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
-                    Active
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <v-row justify="start" no-gutters>
-                  <v-col class="d-flex justify-center align-center" cols="10">
-                    <p>{{ category.description }}</p>
-                  </v-col>
-                  <v-col class="d-flex justify-center align-center" cols="2">
-                    <v-btn color="primary" @click="openCategoryPage(category.id)">
-                      Open
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
+            <v-expansion-panels>
+              <v-expansion-panel
+                v-for="conference in conferences"
+                :key="conference.id"
+                class="my-2"
+              >
+                <v-expansion-panel-title style="background-color: #e9efff">
+                  <v-row no-gutters>
+                    <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
+                      {{ conference.name }}
+                    </v-col>
+                    <v-col class="d-flex justify-center" cols="6">
+                      {{ conference.type }}
+                    </v-col>
+                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
+                      {{ new Date(conference.expiration_date) > new Date() ? 'Active' : 'Expired' }}
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-row justify="start" no-gutters>
+                    <v-col class="d-flex justify-center align-center" cols="10">
+                      <p>Year: {{ conference.year }}</p>
+                    </v-col>
+                    <v-col class="d-flex justify-center align-center" cols="2">
+                      <v-btn color="primary">
+                        Open
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </div>
           <div v-else>
-            <div v-if="needsWorkplace" class="alert alert-warning">
+            <div class="alert alert-warning">
               <h2>Pozor!</h2>
               <p>Nemáte vybraté pracovisko.</p>
               <a href="/profile" class="btn btn-primary">Nastaviť pracovisko</a>
             </div>
           </div>
+
 
         </v-col>
       </v-row>

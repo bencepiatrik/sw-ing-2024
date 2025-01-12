@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\NotificationController;
@@ -70,3 +71,5 @@ Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Reques
 });
 
 Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [NotificationController::class, 'updateState']);
+
+Route::get('/conferences/{id}', [ConferenceController::class, 'findForUser']);

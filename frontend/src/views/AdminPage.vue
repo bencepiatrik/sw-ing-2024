@@ -16,10 +16,10 @@
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn href="/main">Home</v-btn>
-            <v-btn href="/profile">Profile</v-btn>
+            <v-btn href="/main">Domov</v-btn>
+            <v-btn href="/profile">Profil</v-btn>
             <v-btn href="/">Landing</v-btn>
-            <v-btn @click="handleLogout">Logout</v-btn>
+            <v-btn @click="handleLogout">Odhlasit sa</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -258,9 +258,11 @@ const fetchUsers = async () => {
 
 const mapRoleIdToRole = (role_id: number): string => {
   const roles = {
-    1: "user",
-    2: "reviewer",
-    3: "admin",
+    1: "neschvaleny pouzivatel",
+    2: "schvaleny pouzivatel",
+    3: "autor",
+    4: "recenzent",
+    5: "admin",
   };
   return roles[role_id] || "unknown";
 };
