@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UniversityController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkplaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -58,3 +60,7 @@ Route::get('/universities', [UniversityController::class, 'index']);
 Route::get('/faculties', [FacultyController::class, 'getByUniversity']);
 
 Route::get('/departments', [DepartmentController::class, 'getByFaculty']);
+
+Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']);
+
+Route::get('/notifications', [NotificationController::class, 'index']);

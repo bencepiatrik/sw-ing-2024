@@ -99,7 +99,7 @@
         </select>
       </div>
 
-      <button type="submit" :disabled="!selectedKatedra">Uložiť</button>
+      <button type="submit" :disabled="!selectedKatedra">Poziadat zmenu pracoviska</button>
     </form>
   </div>
 
@@ -189,9 +189,32 @@
      const filteredFakulty = computed(() => {
        return fakulty.value.filter(fakulta => fakulta.uni_id === selectedUniverzita.value);
      });
-     console.log(selectedUniverzita)
 
-     console.log(filteredFakulty)
+     const submitWorkplace = async () => {
+       try {
+         const payload = {
+           type: 'Poziadanie o pracoviska',
+           data: {
+             university_id: selectedUniverzita.value,
+             faculty_id: selectedFakulta.value,
+             department_id: selectedKatedra.value,
+           },
+         };
+
+         const response = await axiosInstance.post('/api/submit-workplace', payload);
+
+         if (response.status === 200 || response.status === 201) {
+           alert('Poziadanie o zmenu pracoviska bolo odoslane.');
+         } else {
+           alert('Failed to submit your workplace preferences. Please try again.');
+         }
+       } catch (error) {
+         console.error('Error submitting workplace preferences:', error);
+         alert('An error occurred. Please try again.');
+       }
+     };
+
+
 
      // Run role check on mount
      onMounted(() => {

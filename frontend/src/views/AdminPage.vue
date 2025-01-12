@@ -53,7 +53,40 @@
         </v-navigation-drawer>
 
         <!-- Main Content -->
-        <v-container fluid class="content-area pa-4">
+        <v-container v-if="showNotifications" fluid class="content-area pa-4">
+          <v-card elevation="2" class="pa-4" style="border-radius: 10px;">
+            <v-card-title class="headline text-center">Notifications</v-card-title>
+            <v-data-table :headers="notificationHeaders" :items="notifications" class="elevation-1">
+              <template v-slot:item="{ item }">
+                <tr>
+                  <td>{{ item.type }}</td>
+                  <td>{{ item.user_id }}</td>
+                  <td>{{ item.state }}</td>
+                  <td>{{ new Date(item.created_at).toLocaleString() }}</td>
+                  <td class="d-flex justify-end">
+                    <v-btn
+                      color="green"
+                      dark
+                      class="mx-2"
+                      v-if="item.state === 'sent'"
+                      @click="updateNotificationState(item, 'accepted')"
+                    >
+                      Accept
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      class="mx-2"
+                      v-if="item.state === 'sent'"
+                      @click="updateNotificationState(item, 'declined')"
+                    >
+                      Decline
+                    </v-btn>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card>
           <!-- Conference Table -->
           <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px;">
             <v-card-title class="headline text-center">Conferences</v-card-title>
@@ -154,6 +187,14 @@ const handleLogout = () => {
   sessionStorage.removeItem("user");
   window.location.href = "/";
 };
+const notifications = ref([]);
+const notificationHeaders = [
+  { text: "Type", value: "type" },
+  { text: "User ID", value: "user_id" },
+  { text: "State", value: "state" },
+  { text: "Created At", value: "created_at" },
+];
+
 
 const fetchNotification = async () => {
   showUsersTable.value = false;
@@ -161,13 +202,19 @@ const fetchNotification = async () => {
   showNotifications.value = true;
   try {
     const response = await axiosInstance.get("/api/notifications");
-    notifications.value = response.data.map((conference: { id: number; name: string;}) => ({
-      ...notification,
+    notifications.value = response.data.map((notification: { id: number; type: string; user_id: number; data: object; state: string; created_at: string }) => ({
+      id: notification.id,
+      type: notification.type,
+      user_id: notification.user_id,
+      data: notification.data,
+      state: notification.state,
+      created_at: notification.created_at,
     }));
   } catch (error) {
     console.error("Error fetching notifications:", error);
   }
 };
+
 
 const fetchConference = async () => {
   showNotifications.value = false;
