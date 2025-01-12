@@ -30,14 +30,14 @@ class ConferenceController extends Controller
 
     public function findForUser($id)
     {
-        // $id is the department_id
-        $conferences = Conference::where('department_id', $id)->get();
-
-        if ($conferences->isEmpty()) {
-            return response()->json([
-                'message' => 'No conferences found for the given department.'
-            ], 404);
+        if (!$id) {
+            return response()->json(['error' => 'Department ID is required'], 400);
         }
+
+        $conferences = Conference::where('department_id', $id)
+            ->with('department')
+            ->get();
+
 
         return response()->json($conferences);
     }

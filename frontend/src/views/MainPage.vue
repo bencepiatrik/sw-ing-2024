@@ -41,18 +41,26 @@ const needsWorkplace = computed(() => {
 const conferences = ref<Conference[]>([]);
 
 const fetchConferences = async () => {
-  if (user.value && user.value.departments && user.value.departments.length) {
+  conferences.value = []; // Reset conferences array
+  const departmentIds = user.value?.departments.map((department) => department.id);
 
-    const departmentId = user.value?.departments[0].pivot.department_id;
+  if (departmentIds && departmentIds.length > 0) {
     try {
-      const response = await axiosInstance.get(`/api/conferences/${departmentId}`);
-      conferences.value = response.data;
+      // Loop through department IDs and fetch conferences
+      const conferencePromises = departmentIds.map((id) =>
+        axiosInstance.get(`/api/conferences/${id}`)
+      );
+
+      const responses = await Promise.all(conferencePromises);
+      // Combine all conferences into one array
+      conferences.value = responses.flatMap((response) => response.data);
     } catch (error) {
       console.error('Error fetching conferences:', error);
     }
+  } else {
+    console.warn('No departments found for this user.');
   }
 };
-
 
 // Reaktívne dáta pre kategórie
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
@@ -71,6 +79,18 @@ const fetchCategories = async () => {
     console.error('Error fetching categories:', error);
   }
 };
+
+const publications = ref({});
+
+const fetchPublications = async (conferenceId) => {
+  try {
+    const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
+    publications.value[conferenceId] = response.data; // Store publications by conference ID
+  } catch (error) {
+    console.error('Error fetching publications:', error);
+  }
+};
+
 
 // Odvodené dáta pre filtrované a zoradené kategórie
 const filteredCategories = computed(() => {
@@ -219,30 +239,49 @@ onMounted(async () => {
                 <v-expansion-panel-title style="background-color: #e9efff">
                   <v-row no-gutters>
                     <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
+                      {{ conference.department.name }}
+                    </v-col>
+                    <v-col class="d-flex justify-center" cols="3">
                       {{ conference.name }}
                     </v-col>
-                    <v-col class="d-flex justify-center" cols="6">
+                    <v-col class="d-flex justify-center" cols="2">
                       {{ conference.type }}
                     </v-col>
-                    <v-col class="d-flex justify-center" cols="3" style="color: green; font-weight: bold">
+                    <v-col class="d-flex justify-center" cols="1" style="color: green; font-weight: bold">
                       {{ new Date(conference.expiration_date) > new Date() ? 'Active' : 'Expired' }}
+                    </v-col>
+                    <v-col class="d-flex justify-center align-center" cols="1">
+                      <p>{{ conference.year }}</p>
                     </v-col>
                   </v-row>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <v-row justify="start" no-gutters>
-                    <v-col class="d-flex justify-center align-center" cols="10">
-                      <p>Year: {{ conference.year }}</p>
-                    </v-col>
+
                     <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary">
+                      <v-btn color="primary" @click="fetchPublications(conference.id)">
                         Open
                       </v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="publications[conference.id]" no-gutters class="mt-4">
+                    <v-col
+                      v-for="publication in publications[conference.id]"
+                      :key="publication.id"
+                      class="mb-2"
+                      cols="12"
+                    >
+                      <v-card class="pa-3" elevation="1">
+                        <strong>{{ publication.title }}</strong>
+                        <p>{{ publication.state }}</p>
+                        <p>{{ publication.content }}</p>
+                      </v-card>
                     </v-col>
                   </v-row>
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
+
           </div>
           <div v-else>
             <div class="alert alert-warning">

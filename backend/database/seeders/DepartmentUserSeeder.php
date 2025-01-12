@@ -15,5 +15,11 @@ class DepartmentUserSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('department_user')->insert([
+            'user_id' => 2,
+            'department_id' => 35,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

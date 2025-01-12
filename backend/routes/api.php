@@ -4,6 +4,7 @@ use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UniversityController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkplaceController;
@@ -51,9 +52,12 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionControll
 //conferences
 Route::get('/conferences', [ConferenceController::class, 'index']);
 
-Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
+Route::get('/conferences/{id}', [ConferenceController::class, 'findForUser']);
 
 Route::get('/createconference', [ConferenceController::class, 'index']);
+
+Route::post('/conferences/by-departments', [ConferenceController::class, 'findForDepartments']);
+
 
 
 //works / publifications
@@ -94,3 +98,5 @@ Route::get('/faculties', [FacultyController::class, 'getByUniversity']);
 Route::get('/departments', [DepartmentController::class, 'getByFaculty']);
 
 Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']);
+
+Route::get('/publications', [PublicationController::class, 'index']);

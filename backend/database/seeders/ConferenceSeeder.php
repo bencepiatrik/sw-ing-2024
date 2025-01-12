@@ -51,6 +51,20 @@ class ConferenceSeeder extends Seeder
                 'department_id' => 34,
                 'expiration_date' => Carbon::create(2025, 9, 15),
             ],
+            [
+                'name' => 'Velke a tazke cisla',
+                'year' => 2025,
+                'type' => 'Národná',
+                'department_id' => 35,
+                'expiration_date' => Carbon::create(2025, 9, 15),
+            ],
+            [
+                'name' => 'Jednoduche cisla',
+                'year' => 2025,
+                'type' => 'Národná',
+                'department_id' => 35,
+                'expiration_date' => Carbon::create(2025, 9, 15),
+            ],
         ];
 
         foreach ($conferences as $conference) {
