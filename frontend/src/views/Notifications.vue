@@ -30,7 +30,7 @@ onMounted(fetchNotifications);
 
 
 <template>
-  <v-app>
+  <v-app style="background-color: #D9DCD6;">
     <v-app-bar app color="#2D627F" dark>
       <v-container fluid>
         <v-row align="center" no-gutters>
@@ -62,7 +62,7 @@ onMounted(fetchNotifications);
         </v-row>
       </v-container>
     </v-app-bar>
-    <v-container fluid class="pa-4">
+    <v-container fluid class="pa-4" style="background-color: #D9DCD6;">
       <v-card elevation="2" class="pa-4" style="border-radius: 10px;">
         <v-card-title class="headline text-center">Your Notifications</v-card-title>
         <v-data-table :headers="headers" :items="notifications" class="elevation-1" dense>

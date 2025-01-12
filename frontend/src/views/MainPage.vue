@@ -145,7 +145,7 @@ onMounted(async () => {
 
 
 <template>
- <v-app class="main-container">
+ <v-app class="main-container" style="border-radius: 10px;">
     <v-app-bar app color="#2D627F" dark>
       <v-container fluid>
         <v-row align="center" no-gutters>
@@ -261,3 +261,8 @@ onMounted(async () => {
 
 
 </template>
+
+<style scoped>
+
+
+</style>
