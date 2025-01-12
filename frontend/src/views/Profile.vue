@@ -25,7 +25,7 @@
         <v-col cols="3" class="d-flex justify-end align-center">
           <v-btn variant="text" href="/">Landing</v-btn>
           <v-btn variant="text" href="/main">Domov</v-btn>
-          <v-btn variant="text" href="/admin" v-if="user && user.role_id === 4">Admin Panel</v-btn>
+          <v-btn variant="text" href="/admin" v-if="user && user.role_id === 5">Admin Panel</v-btn>
           <v-btn variant="text" href="/ziadosti">Ziadosti</v-btn>
           <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>
         </v-col>

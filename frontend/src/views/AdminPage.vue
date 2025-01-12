@@ -34,7 +34,7 @@
         <v-navigation-drawer app permanent width="80" class="sidebar">
           <!-- Notifications -->
           <v-list dense>
-            <v-list-item link height="100" @click="fetchNotification" class="d-flex justify-center">
+            <v-list-item link height="100" @click="fetchNotifications" class="d-flex justify-center">
               <v-icon large>mdi-alert-circle</v-icon>
             </v-list-item>
           </v-list>
@@ -60,7 +60,10 @@
               <template v-slot:item="{ item }">
                 <tr>
                   <td>{{ item.type }}</td>
-                  <td>{{ item.user_id }}</td>
+                  <td>{{ item.user_email }}</td>
+                  <td>{{ item.university }}</td>
+                  <td>{{ item.faculty }}</td>
+                  <td>{{ item.department }}</td>
                   <td>{{ item.state }}</td>
                   <td>{{ new Date(item.created_at).toLocaleString() }}</td>
                   <td class="d-flex justify-end">
@@ -85,6 +88,7 @@
                   </td>
                 </tr>
               </template>
+
             </v-data-table>
           </v-card>
           <!-- Conference Table -->
@@ -189,31 +193,32 @@ const handleLogout = () => {
 };
 const notifications = ref([]);
 const notificationHeaders = [
-  { text: "Type", value: "type" },
-  { text: "User ID", value: "user_id" },
-  { text: "State", value: "state" },
-  { text: "Created At", value: "created_at" },
-];
+    { text: "Type", value: "type" },
+    { text: "User Email", value: "user_email" },
+    { text: "University", value: "university" },
+    { text: "Faculty", value: "faculty" },
+    { text: "Department", value: "department" },
+    { text: "State", value: "state" },
+    { text: "Created At", value: "created_at" },
+    { text: "Actions", value: "actions", sortable: false },
+  ]
 
 
-const fetchNotification = async () => {
+
+  const fetchNotifications = async () => {
   showUsersTable.value = false;
   showConferences.value = false;
   showNotifications.value = true;
   try {
     const response = await axiosInstance.get("/api/notifications");
-    notifications.value = response.data.map((notification: { id: number; type: string; user_id: number; data: object; state: string; created_at: string }) => ({
-      id: notification.id,
-      type: notification.type,
-      user_id: notification.user_id,
-      data: notification.data,
-      state: notification.state,
-      created_at: notification.created_at,
-    }));
+    notifications.value = response.data; // Assign all fields directly
+
+    console.log(response)
   } catch (error) {
     console.error("Error fetching notifications:", error);
   }
-};
+  };
+
 
 
 const fetchConference = async () => {
@@ -296,6 +301,18 @@ const closeDialog = () => {
   selectedRole.value = "";
   selectedUser.value = null;
 };
+
+const updateNotificationState = async (notification, newState) => {
+  try {
+    await axiosInstance.put(`/api/notifications/${notification.id}/state`, { state: newState });
+    notification.state = newState;
+    alert(`Notification has been ${newState}.`);
+  } catch (error) {
+    console.error('Error updating notification state:', error);
+    alert('Failed to update notification state. Please try again.');
+  }
+};
+
 </script>
 
 

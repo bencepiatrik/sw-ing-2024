@@ -11,6 +11,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $unAuthRole = Role::where('name', 'neschvaleny pouzivatel')->first();
+        $authRole = Role::where('name', 'schvaleny pouzivatel')->first();
         $authorRole = Role::where('name', 'autor')->first();
         $reviewerRole = Role::where('name', 'recenzent')->first();
         $adminRole = Role::where('name', 'admin')->first();
@@ -19,7 +20,16 @@ class UserSeeder extends Seeder
             ['email' => 'unauth@unauth.unauth'],
             [
                 'role_id' => $unAuthRole->id,
-                'name' => 'test',
+                'name' => 'unauth',
+                'password' => bcrypt('testtest'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'auth@auth.auth'],
+            [
+                'role_id' => $authRole->id,
+                'name' => 'auth',
                 'password' => bcrypt('testtest'),
             ]
         );

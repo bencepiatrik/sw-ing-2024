@@ -68,3 +68,5 @@ Route::get('/notifications', [NotificationController::class, 'index']);
 Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
     return $request->user()->notifications;
 });
+
+Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [NotificationController::class, 'updateState']);
