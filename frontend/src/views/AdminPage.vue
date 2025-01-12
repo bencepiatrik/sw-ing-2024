@@ -40,7 +40,7 @@
           </v-list>
           <!-- Conferencies -->
           <v-list dense>
-            <v-list-item link height="100" @click="fetchConference" class="d-flex justify-center">
+            <v-list-item link height="100" @click="fetchConferences" class="d-flex justify-center">
               <v-icon large>mdi-shape</v-icon>
             </v-list-item>
           </v-list>
@@ -94,7 +94,7 @@
           <!-- Conference Table -->
           <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px;">
             <v-card-title class="headline text-center">Conferences</v-card-title>
-            <v-btn color="primary" class="mb-4" @click="addConference">
+            <v-btn color="primary" class="mb-4" @click="CreateConference">
               Add Conference
             </v-btn>
             <v-data-table :headers="headers" :items="conferences" class="elevation-1">
@@ -231,7 +231,7 @@ const notificationHeaders = [
   }
   };
 
-const fetchConference = async () => {
+const fetchConferences = async () => {
   showNotifications.value = false;
   showUsersTable.value = false;
   showConferences.value = true;
@@ -273,6 +273,10 @@ const mapRoleIdToRole = (role_id: number): string => {
     5: "admin",
   };
   return roles[role_id] || "unknown";
+};
+
+const CreateConference = () => {
+  router.push('/createconference');
 };
 
 
