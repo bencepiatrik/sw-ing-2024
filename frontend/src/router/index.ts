@@ -12,6 +12,7 @@ import AdminPage from '@/views/AdminPage.vue'
 import Notifications from '@/views/Notifications.vue'
 import CreateConference from '@/views/CreateConference.vue'
 import AdminConference from '@/views/AdminConference.vue'
+import EditConference from '@/views/EditConference.vue'
 
 const routes = [
   {
@@ -78,7 +79,12 @@ const routes = [
     component: AdminConference,
     meta: { requiresAuth: true }
   },
-
+  {
+    path: '/editconference/:id',
+    name: 'EditConference',
+    component: EditConference,
+    props: true
+  },
   {
     path: '/ziadosti',
     name: 'Notifications',

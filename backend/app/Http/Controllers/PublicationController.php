@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publication;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PublicationController extends Controller
@@ -18,5 +19,16 @@ class PublicationController extends Controller
         $publications = Publication::where('conference_id', $conferenceId)->get();
 
         return response()->json($publications);
+    }
+
+    public function show($id): JsonResponse
+    {
+        $publication = Publication::find($id);
+
+        if (!$publication) {
+            return response()->json(['message' => 'Publication not found'], 404);
+        }
+
+        return response()->json($publication);
     }
 }

@@ -60,6 +60,8 @@ Route::post('/conferences/by-departments', [ConferenceController::class, 'findFo
 
 Route::post('/conferences', [ConferenceController::class, 'store']);
 
+Route::put('/conferences/{id}', [ConferenceController::class, 'update']);
+
 
 //works
 Route::post('/works', [WorkController::class, 'store']);
@@ -101,3 +103,5 @@ Route::get('/departments', [DepartmentController::class, 'getByFaculty']);
 Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']);
 
 Route::get('/publications', [PublicationController::class, 'index']);
+
+Route::get('/publication/{id}', [PublicationController::class, 'show']);

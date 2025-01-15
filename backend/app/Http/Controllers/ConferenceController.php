@@ -49,4 +49,18 @@ class ConferenceController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $conference = Conference::find($id);
+    
+        if (!$conference) {
+            return response()->json(['error' => 'Conference not found'], 404);
+        }
+    
+        $conference->update($request->all());
+    
+        return response()->json(['message' => 'Conference updated successfully']);
+    }
+    
+
 }
