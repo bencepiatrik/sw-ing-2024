@@ -238,7 +238,7 @@ const fetchConferences = async () => {
 };
 
 const goToConference = (conferenceId: number) => {
-  router.push(`/conference/${conferenceId}`);
+  router.push(`/adminconference/${conferenceId}`);
 };
 
 const fetchUsers = async () => {

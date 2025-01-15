@@ -11,6 +11,7 @@ import Login from '@/views/Login.vue'
 import AdminPage from '@/views/AdminPage.vue'
 import Notifications from '@/views/Notifications.vue'
 import CreateConference from '@/views/CreateConference.vue'
+import AdminConference from '@/views/AdminConference.vue'
 
 const routes = [
   {
@@ -69,6 +70,12 @@ const routes = [
     path: '/createconference',
     name: 'CreateConference',
     component: CreateConference,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/adminconference',
+    name: 'AdminConference',
+    component: AdminConference,
     meta: { requiresAuth: true }
   },
 

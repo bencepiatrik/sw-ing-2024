@@ -64,6 +64,8 @@ Route::post('/conferences', [ConferenceController::class, 'store']);
 //works / publifications
 Route::post('/works', [WorkController::class, 'store']);
 
+Route::get('/publications', [ConferenceController::class, 'index']);
+
 Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
 
 Route::middleware('auth:sanctum')->get('/categories/{id}/works', [WorkController::class, 'getUserWorksByCategory']);
