@@ -42,5 +42,25 @@ class ConferenceController extends Controller
         return response()->json($conferences);
     }
 
+    public function store(Request $request)
+    {
+        // 1. Validácia vstupov
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'year' => 'required|integer|min:1900|max:2100',
+            'type' => 'required|string|max:255',
+            'department_id' => 'required|integer|exists:departments,id',
+            'expiration_date' => 'required|date',
+        ]);
+
+        // 2. Vytvorenie konferencie
+        $conference = Conference::create($validated);
+
+        // 3. Vrátenie odpovede
+        return response()->json([
+            'message' => 'Konferencia bola úspešne vytvorená.',
+            'conference' => $conference,
+        ], 201);
+    }
 
 }

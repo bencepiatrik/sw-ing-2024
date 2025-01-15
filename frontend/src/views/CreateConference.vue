@@ -35,6 +35,19 @@
             <!-- Typ konferencie -->
             <v-text-field v-model="formData.type" label="Typ" required></v-text-field>
 
+            <!-- Rok konferencie -->
+            <v-text-field
+              v-model="formData.year"
+              label="Rok"
+              type="number"
+              required
+              :rules="[yearRule]"
+              maxlength="4"
+              min="1900"
+              max="2100"
+              placeholder="Vyberte rok konferencie"
+            ></v-text-field>
+
             <!-- Výber univerzity -->
             <v-autocomplete
               v-model="selectedUniversity"
@@ -93,6 +106,7 @@ import { VDateInput } from "vuetify/labs/VDateInput";
 const formData = ref({
   name: "",
   type: "",
+  year: null,
   department_id: null,
   expiration_date: null,
 });
@@ -109,10 +123,20 @@ const router = useRouter();
 watch(selectedUniversity, (newVal) => {
   if (newVal) fetchFaculties(newVal);
 });
-
 watch(selectedFaculty, (newVal) => {
   if (newVal) fetchDepartments(newVal);
 });
+
+const yearRule = (value: number) => {
+  if (!value || value.toString().length !== 4) {
+    return "Rok musí byť štvormiestne číslo (napr. 2025).";
+  }
+  if (value < 1900 || value > 2100) {
+    return "Rok musí byť medzi 1900 a 2100.";
+  }
+  return true;
+};
+
 // Fetch univerzít
 const fetchUniversities = async () => {
   try {
@@ -160,12 +184,22 @@ const createConference = async () => {
     const payload = new FormData();
     payload.append("name", formData.value.name);
     payload.append("type", formData.value.type);
+    payload.append("year", String(formData.value.year));
     payload.append("department_id", String(formData.value.department_id));
     payload.append(
       "expiration_date",
       formData.value.expiration_date
-        ? formData.value.expiration_date : ""
+        ? new Date(formData.value.expiration_date).toISOString().split("T")[0]
+        : ""
     );
+
+    console.log("Payload:", {
+  name: formData.value.name,
+  type: formData.value.type,
+  year: formData.value.year,
+  department_id: formData.value.department_id,
+  expiration_date: formData.value.expiration_date,
+});
 
     await axiosInstance.post("/api/conferences", payload);
     alert("Konferencia bola úspešne vytvorená!");

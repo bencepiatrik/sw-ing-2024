@@ -14,6 +14,7 @@ class Conference extends Model
      *
      * @var array
      */
+    protected $table = 'conferences'; // Názov tabuľky
     protected $fillable = [
         'name',
         'year',
