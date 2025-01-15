@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background-color: #D9DCD6;">
+  <v-app style="background-color: #D9DCD6; ">
     <!-- Navbar -->
     <v-app-bar app color="#2D627F" dark>
       <v-container fluid>
@@ -26,9 +26,37 @@
     </v-app-bar>
 
     <!-- Sidebar + Content Layout -->
-    <v-main fluid class="pa-4" style="background-color: #D9DCD6;">
+    <v-main fluid class="pa-4" style="background-color: #D9DCD6;" >
       <v-container fluid class="d-flex pa-0">
+        <!-- Main Content -->
+        <v-row justify="space-between" v-if="!showNotifications && !showConferences && !showUsersTable">
+          <!-- Notification Card -->
+          <v-col cols="4">
+            <v-card elevation="3" class="pa-4 text-center">
+              <v-icon size="50" class="mb-3">mdi-bell</v-icon>
+              <v-card-title>Notifikácie</v-card-title>
+              <v-btn color="primary" @click="fetchNotifications">Zobraziť</v-btn>
+            </v-card>
+          </v-col>
 
+          <!-- Conferences Card -->
+          <v-col cols="4">
+            <v-card elevation="3" class="pa-4 text-center">
+              <v-icon size="50" class="mb-3">mdi-shape</v-icon>
+              <v-card-title>Konferencie</v-card-title>
+              <v-btn color="primary" @click="fetchConferences">Zobraziť</v-btn>
+            </v-card>
+          </v-col>
+
+          <!-- Users Card -->
+          <v-col cols="4">
+            <v-card elevation="3" class="pa-4 text-center">
+              <v-icon size="50" class="mb-3">mdi-account</v-icon>
+              <v-card-title>Používatelia</v-card-title>
+              <v-btn color="primary" @click="fetchUsers">Zobraziť</v-btn>
+            </v-card>
+          </v-col>
+        </v-row>
 
         <!-- Sidebar -->
         <v-navigation-drawer app permanent width="80" class="sidebar">
@@ -325,6 +353,7 @@ const updateNotificationState = async (notification, newState) => {
 <style scoped>
 .sidebar {
   background-color: #F5F5F5;
+  overflow: hidden;
 }
 
 .icon-color {
@@ -354,4 +383,28 @@ content-section {
   margin: 0 auto;
   border-radius: 10px;
 }
+
+/* Zabraňuje globálnemu skrolovaniu na celej stránke */
+html, body {
+  height: 100%; /* Nastaví výšku na 100% */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Zabraňuje skrolovaniu */
+}
+
+/* Nastavuje aplikáciu, aby zaberala celú výšku stránky */
+v-app {
+  height: 100%; /* Nastaví výšku aplikácie na celú stránku */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Zakazuje skrolovanie */
+}
+
+/* Nastaví hlavný obsah na maximálnu výšku okna s možnosťou skrolovania len vnútri hlavného obsahu */
+.v-main {
+  flex: 1;
+  overflow-y: auto; /* Skrolovanie je povolené len v hlavnej oblasti */
+  padding: 16px;
+}
+
 </style>
