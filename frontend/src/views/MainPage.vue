@@ -39,6 +39,10 @@ const needsWorkplace = computed(() => {
 });
 
 const conferences = ref<Conference[]>([]);
+const selectedDepartments = ref<string[]>([]);
+  const selectedState = ref<string[]>([]);
+const selectedYears = ref<number[]>([]);
+const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
 
 const fetchConferences = async () => {
   conferences.value = []; // Reset conferences array
@@ -62,12 +66,8 @@ const fetchConferences = async () => {
   }
 };
 
-// Reaktívne dáta pre kategórie
-const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
-
 // Reaktívne premenné pre vyhľadávanie, filtrovanie a zoradenie
 const search = ref<string>('');
-const selectedFilters = ref<string[]>([]); // Vybrané hodnoty checkboxov
 const sortOrder = ref<string>('A -> Z (Title)');
 
 // Funkcia na načítanie kategórií z API
@@ -82,7 +82,7 @@ const fetchCategories = async () => {
 
 const publications = ref({});
 
-const fetchPublications = async (conferenceId) => {
+const fetchPublications = async (conferenceId: number) => {
   try {
     const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
     publications.value[conferenceId] = response.data; // Store publications by conference ID
@@ -93,35 +93,50 @@ const fetchPublications = async (conferenceId) => {
 
 
 // Odvodené dáta pre filtrované a zoradené kategórie
-const filteredCategories = computed(() => {
-  let filtered = categories.value;
+const processedConferences = computed(() => {
+  // Krok 1: Filtrovanie
+  let filtered = [...conferences.value];
 
-  // Filtrovanie podľa checkboxov
-  if (selectedFilters.value.length > 0) {
-    filtered = filtered.filter(category =>
-      selectedFilters.value.includes(category.name)
-    );
+  if (selectedDepartments.value.length > 0) {
+    filtered = filtered.filter((conf) => {
+      const departmentName = conf.department?.name || ''; // Zabezpečíme, že hodnota nie je undefined
+      return selectedDepartments.value.includes(departmentName);
+    });
   }
 
-  // Vyhľadávanie podľa textu
-  filtered = filtered.filter(category =>
-    category.name.toLowerCase().includes(search.value.toLowerCase())
-  );
+  if (selectedYears.value.length > 0) {
+    filtered = filtered.filter((conf) => selectedYears.value.includes(conf.year));
+  }
 
-  // Zoradenie
+  if (selectedState.value.length > 0) {
+    filtered = filtered.filter((conf) => {
+      const isActive = new Date(conf.expiration_date) > new Date();
+      return selectedState.value.includes(isActive ? 'Active' : 'Expired');
+    });
+  }
+
+  // Filtrovanie podľa vyhľadávania
+  if (search.value.trim() !== '') {
+    filtered = filtered.filter((conf) =>
+      conf.name.toLowerCase().includes(search.value.toLowerCase())
+    );
+  }
+  
+  // Krok 2: Zoradenie
   switch (sortOrder.value) {
     case 'A -> Z (Title)':
       return filtered.sort((a, b) => a.name.localeCompare(b.name));
     case 'Z -> A (Title)':
       return filtered.sort((a, b) => b.name.localeCompare(a.name));
     case 'Najnovší':
-      return filtered.sort((a, b) => b.id - a.id); // Predpokladáme, že `id` reprezentuje čas
+      return filtered.sort((a, b) => b.year - a.year);
     case 'Najstarší':
-      return filtered.sort((a, b) => a.id - b.id);
+      return filtered.sort((a, b) => a.year - b.year);
     default:
       return filtered;
   }
 });
+
 
 // Funkcia pre otvorenie detailu kategórie
 const openCategoryPage = (categoryId: number) => {
@@ -159,7 +174,8 @@ onMounted(async () => {
   if (!user.value) {
     await authStore.initialize();
   }
-  //fetchConferences();
+  fetchCategories();
+  fetchConferences();
 });
 </script>
 
@@ -196,13 +212,28 @@ onMounted(async () => {
         <v-col cols="2">
           <v-card>
             <v-card-title>Filtrovať</v-card-title>
-            <v-checkbox
-              v-for="filter in ['Category1', 'Skola1', 'Rok1', 'Checkbox']"
-              :key="filter"
-              :label="filter"
-              :value="filter"
-              v-model="selectedFilters"
-            ></v-checkbox>
+            <!-- Dropdown pre Katedry -->
+            <v-select
+              v-model="selectedDepartments"
+              :items="Array.from(new Set(conferences.map(c => c.department?.name).filter(Boolean)))"
+              label="Katedra"
+              multiple
+            ></v-select>
+
+            <v-select
+              v-model="selectedState"
+              :items="['Aktívny', 'Expirovaný']"
+              label="Stav"
+              multiple
+            ></v-select>
+
+            <v-select
+              v-model="selectedYears"
+              :items="Array.from(new Set(conferences.map(c => c.year)))"
+              label="Rok"
+              multiple
+            ></v-select>
+
           </v-card>
         </v-col>
 
@@ -232,14 +263,14 @@ onMounted(async () => {
           <div v-if="!needsWorkplace">
             <v-expansion-panels>
               <v-expansion-panel
-                v-for="conference in conferences"
+                v-for="conference in processedConferences"
                 :key="conference.id"
                 class="my-2"
               >
                 <v-expansion-panel-title style="background-color: #e9efff">
                   <v-row no-gutters>
                     <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
-                      {{ conference.department.name }}
+                      {{ conference.department?.name }}
                     </v-col>
                     <v-col class="d-flex justify-center" cols="3">
                       {{ conference.name }}

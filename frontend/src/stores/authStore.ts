@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { login, logout } from '../api/auth';
 import axiosInstance from "@/api/axiosInstance";
+import axios from 'axios';
 
 // Definícia rozhrania pre údaje používateľa
 interface User {
@@ -15,6 +16,7 @@ interface User {
 }
 
 interface Department {
+  [x: string]: any;
   pivot: {
     department_id: number;
   };
