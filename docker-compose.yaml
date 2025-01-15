@@ -83,8 +83,18 @@ services:
       php artisan config:cache &&
       php artisan route:cache &&
       php artisan view:cache &&
-      php artisan migrate --force &&
-      php artisan db:seed --force &&
+      if [ $(php artisan migrate:status | grep -c 'No migrations found') -eq 0 ]; then
+        echo 'Migrations already applied.';
+      else
+        echo 'Running migrations...';
+        php artisan migrate --force;
+      fi &&
+      if [ $(php artisan db:seed | grep -c 'Database seeding completed') -eq 0 ]; then
+        echo 'Database already seeded.';
+      else
+        echo 'Running seeders...';
+        php artisan db:seed --force;
+      fi &&
       php-fpm
       "
 

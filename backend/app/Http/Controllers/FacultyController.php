@@ -10,6 +10,7 @@ class FacultyController extends Controller
     public function getByUniversity(Request $request)
     {
         $universityId = $request->query('uni_id');
-        return Faculty::where('uni_id', $universityId)->get();
+        $faculties = Faculty::where('uni_id', $universityId)->get();
+        return response()->json($faculties);
     }
 }

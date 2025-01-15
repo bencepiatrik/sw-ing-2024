@@ -58,6 +58,7 @@ Route::get('/createconference', [ConferenceController::class, 'index']);
 
 Route::post('/conferences/by-departments', [ConferenceController::class, 'findForDepartments']);
 
+Route::post('/conferences', [ConferenceController::class, 'store']);
 
 
 //works / publifications

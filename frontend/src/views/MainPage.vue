@@ -111,7 +111,7 @@ const processedConferences = computed(() => {
   if (selectedState.value.length > 0) {
     filtered = filtered.filter((conf) => {
       const isActive = new Date(conf.expiration_date) > new Date();
-      return selectedState.value.includes(isActive ? 'Active' : 'Expired');
+      return selectedState.value.includes(isActive ? 'Aktívny' : 'Expirovaný');
     });
   }
 
