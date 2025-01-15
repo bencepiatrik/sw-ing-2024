@@ -14,6 +14,7 @@ class Publication extends Model
      *
      * @var array
      */
+    protected $table = 'publications'; // Názov tabuľky
     protected $fillable = [
         'conference_id',
         'title',

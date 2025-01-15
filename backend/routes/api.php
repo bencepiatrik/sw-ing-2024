@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionControll
 //conferences
 Route::get('/conferences', [ConferenceController::class, 'index']);
 
-Route::get('/conferences/{id}', [ConferenceController::class, 'findForUser']);
+Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
 
 Route::get('/createconference', [ConferenceController::class, 'index']);
 
@@ -61,10 +61,8 @@ Route::post('/conferences/by-departments', [ConferenceController::class, 'findFo
 Route::post('/conferences', [ConferenceController::class, 'store']);
 
 
-//works / publifications
+//works
 Route::post('/works', [WorkController::class, 'store']);
-
-Route::get('/publications', [ConferenceController::class, 'index']);
 
 Route::middleware('auth:sanctum')->post('/works', [WorkController::class, 'store']);
 

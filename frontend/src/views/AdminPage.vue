@@ -53,7 +53,7 @@
         </v-navigation-drawer>
 
         <!-- Main Content -->
-        <v-container v-if="showNotifications" style="width: 70vw;">
+        <v-container v-if="showNotifications" style="width: 80vw;">
           <v-card elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
             <v-card-title class="headline text-center">Notifikácie</v-card-title>
             <v-data-table :headers="notificationHeaders" :items="notifications" class="elevation-1">
@@ -102,7 +102,7 @@
         </v-card>
         <!-- User Table -->
         <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
-          <v-card-title class="headline text-center">Správanie použivatelov</v-card-title>
+          <v-card-title class="headline text-center">Správa používateľov</v-card-title>
           <v-data-table :headers="headers" :items="users" class="elevation-1">
             <template v-slot:item="{ item }">
               <tr>

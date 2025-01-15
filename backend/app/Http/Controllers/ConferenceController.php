@@ -28,20 +28,6 @@ class ConferenceController extends Controller
         return response()->json($conference);
     }
 
-    public function findForUser($id)
-    {
-        if (!$id) {
-            return response()->json(['error' => 'Department ID is required'], 400);
-        }
-
-        $conferences = Conference::where('department_id', $id)
-            ->with('department')
-            ->get();
-
-
-        return response()->json($conferences);
-    }
-
     public function store(Request $request)
     {
         // 1. Validácia vstupov

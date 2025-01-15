@@ -73,7 +73,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/adminconference',
+    path: '/adminconference/:id',
     name: 'AdminConference',
     component: AdminConference,
     meta: { requiresAuth: true }
