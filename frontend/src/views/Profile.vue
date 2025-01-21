@@ -11,7 +11,7 @@
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Môj profil</v-toolbar-title>
+            <v-toolbar-title class="text-h6">MÔJ PROFIL</v-toolbar-title>
           </v-col>
 
           <!-- Spacer for Buttons -->
@@ -19,7 +19,7 @@
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn variant="text" href="/">Landing</v-btn>
+            <!--<v-btn variant="text" href="/">Landing</v-btn>-->
             <v-btn variant="text" href="/main">Domov</v-btn>
             <v-btn variant="text" href="/admin" v-if="user && user.role_id === 5">Admin Panel</v-btn>
             <v-btn variant="text" href="/ziadosti">Žiadosti</v-btn>
@@ -106,7 +106,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '../stores/authStore';
 import { useRouter } from 'vue-router';
 import { computed, onMounted, ref } from 'vue';
 import axiosInstance from '../api/axiosInstance';

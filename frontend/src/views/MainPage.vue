@@ -40,23 +40,23 @@ const needsWorkplace = computed(() => {
 
 const conferences = ref<Conference[]>([]);
 const selectedDepartments = ref<string[]>([]);
-  const selectedState = ref<string[]>([]);
+const selectedState = ref<string[]>([]);
 const selectedYears = ref<number[]>([]);
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
 
 const fetchConferences = async () => {
-  conferences.value = []; // Reset conferences array
-  const departmentIds = user.value?.departments.map((department) => department.id);
+  conferences.value = []; // Resetuj konferencie
+  const departmentIds = user.value?.departments?.map((department) => department.id);
 
   if (departmentIds && departmentIds.length > 0) {
     try {
-      // Loop through department IDs and fetch conferences
-      const conferencePromises = departmentIds.map((id) =>
-        axiosInstance.get(`/api/conferences/${id}`)
-      );
-
-      const responses = await Promise.all(conferencePromises);
-      // Combine all conferences into one array
+      const responses = await Promise.all(
+  departmentIds.map((id) => {
+    //console.log(`Fetching conferences for department ID: ${id}`);
+    return axiosInstance.get(`/api/conferences/${id}`);
+  })
+);
+//console.log('Conference responses:', responses);
       conferences.value = responses.flatMap((response) => response.data);
     } catch (error) {
       console.error('Error fetching conferences:', error);
@@ -82,12 +82,25 @@ const fetchCategories = async () => {
 
 const publications = ref({});
 
-const fetchPublications = async (conferenceId: number) => {
-  try {
-    const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
-    publications.value[conferenceId] = response.data; // Store publications by conference ID
-  } catch (error) {
-    console.error('Error fetching publications:', error);
+const openedConferences = ref<Record<number, boolean>>({}); // Record to track opened/closed state
+  //console.log('Conferences:', conferences.value);
+  //console.log('User departments:', user.value?.departments);
+
+
+const togglePublications = async (conferenceId: number) => {
+  if (openedConferences.value[conferenceId]) {
+    // Ak je otvorené, zavri publikácie
+    delete openedConferences.value[conferenceId]; // Remove from opened conferences
+    delete publications.value[conferenceId]; // Clear publications if needed
+  } else {
+    // Ak je zatvorené, načítaj publikácie
+    try {
+      const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
+      publications.value[conferenceId] = response.data; // Store publications by conference ID
+      openedConferences.value[conferenceId] = true; // Mark as opened
+    } catch (error) {
+      console.error('Error fetching publications:', error);
+    }
   }
 };
 
@@ -192,16 +205,16 @@ onMounted(async () => {
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Main Page</v-toolbar-title>
+            <v-toolbar-title class="text-h6">NÁSTENKA</v-toolbar-title>
           </v-col>
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
           <v-btn variant="text" href="/admin" v-if="user && user.role_id === 5">Admin Panel</v-btn>
-          <v-btn variant="text" href="/">Landing</v-btn>
+          <!--<v-btn variant="text" href="/">Landing</v-btn>-->
           <v-btn variant="text" href="/profile">Profil</v-btn>
-          <v-btn variant="text" href="/ziadosti">Ziadosti</v-btn>
-          <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>
+          <v-btn variant="text" href="/ziadosti">Žiadosti</v-btn>
+          <v-btn variant="text" @click="handleLogout">Odhlásiť sa</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -244,7 +257,7 @@ onMounted(async () => {
             <v-col cols="8">
               <v-text-field
                 v-model="search"
-                label="Search"
+                label="Vyhľadávanie"
                 prepend-inner-icon="mdi-magnify"
               ></v-text-field>
             </v-col>
@@ -288,10 +301,12 @@ onMounted(async () => {
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <v-row justify="start" no-gutters>
-
                     <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary" @click="fetchPublications(conference.id)">
-                        Open
+                      <v-btn
+                        color="primary"
+                        @click="togglePublications(conference.id)"
+                      >
+                        {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
                       </v-btn>
                     </v-col>
                   </v-row>
