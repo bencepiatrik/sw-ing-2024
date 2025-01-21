@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'autor@autor.autor'],
             [
-                'role_id' => $authorRole->id,
+                'role_id' => $authRole->id,
                 'name' => 'autor',
                 'password' => bcrypt('testtest'),
             ]
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'review@review.review'],
             [
-                'role_id' => $reviewerRole->id,
+                'role_id' => $authRole->id,
                 'name' => 'review',
                 'password' => bcrypt('testtest'),
             ]
