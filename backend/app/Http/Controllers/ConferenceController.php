@@ -17,16 +17,21 @@ class ConferenceController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    public function show($id): JsonResponse
+    
+    public function show($department_id): JsonResponse
     {
-        $conference = Conference::find($id);
+        // Hľadanie všetkých konferencií podľa department_id
+        $conferences = Conference::where('department_id', $department_id)->get();
 
-        if (!$conference) {
-            return response()->json(['message' => 'Conference not found'], 404);
+        // Ak žiadne konferencie nenájdené
+        if ($conferences->isEmpty()) {
+            return response()->json(['message' => 'No conferences found for this department'], 404);
         }
 
-        return response()->json($conference);
+        // Vrátenie konferencií ako JSON
+        return response()->json($conferences);
     }
+
 
     public function store(Request $request)
     {

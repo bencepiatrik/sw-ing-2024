@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionControll
 //conferences
 Route::get('/conferences', [ConferenceController::class, 'index']);
 
-Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
+Route::get('/conferences/{department_id}', [ConferenceController::class, 'show']);
 
 Route::get('/createconference', [ConferenceController::class, 'index']);
 
