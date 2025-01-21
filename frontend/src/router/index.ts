@@ -101,9 +101,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
+  console.log("JE ADMIN "+authStore.isAdmin);
+  if (authStore.isAdmin && authStore.isAuthenticated && ['/login', '/register', '/'].includes(to.path)) {
+    return next('/admin') // Redirect to admin page and stop further execution
+  }
   // If user is authenticated and trying to access guest-only pages
-  if (authStore.isAuthenticated && ['/login', '/register', '/'].includes(to.path)) {
+  if (authStore.isAuthenticated && !authStore.isAdmin && ['/login', '/register', '/'].includes(to.path)) {
     return next('/main') // Redirect to main page and stop further execution
   }
 
@@ -112,6 +115,7 @@ router.beforeEach((to, from, next) => {
     return next('/') // Redirect to landing page and stop further execution
   }
 
+  
   // Allow navigation otherwise
   next()
 })

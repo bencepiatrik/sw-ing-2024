@@ -28,7 +28,6 @@ export interface Conference {
   role?: string | null;
 }
 
-
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
 const router = useRouter();
@@ -333,18 +332,18 @@ onMounted(async () => {
                       <!-- Check role and render buttons accordingly -->
                       <div v-if="conference.role === 'autor'">
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
-                          Chcem byt Recenzent
+                          Chcem byť Recenzent
                         </v-btn>
                         <v-btn color="primary" @click="togglePublications(conference.id)">
                           {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
                         </v-btn>
                         <v-btn color="primary">
-                          Vytvorit Publikaciu
+                          Vytvoriť publikáciu
                         </v-btn>
                       </div>
                       <div v-else-if="conference.role === 'recenzent'">
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
-                          Chcem byt Autor
+                          Chcem byť Autor
                         </v-btn>
                         <v-btn color="primary" @click="togglePublications(conference.id)">
                           {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
@@ -352,10 +351,10 @@ onMounted(async () => {
                       </div>
                       <div v-else>
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
-                          Chcem byt Autor
+                          Chcem byť Autor
                         </v-btn>
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
-                          Chcem byt Recenzent
+                          Chcem byť Recenzent
                         </v-btn>
                       </div>
 

@@ -182,7 +182,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 import { ref } from "vue";
 import axiosInstance from "../api/axiosInstance";
-import {useAuthStore} from "@/stores/authStore";
+import {useAuthStore} from "../stores/authStore";
 
 type NotificationItem = {
   type: string;
