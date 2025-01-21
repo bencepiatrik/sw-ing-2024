@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - dev_swing_db:/etc/mysql
+      - ./config/db/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306  # MySQL: http://localhost:3306
     environment:
@@ -53,7 +54,7 @@ services:
     networks:
       - sw-ing
     ports:
-      - 8080:80  # API Web: http://localhost:8080
+      - 8083:80  # API Web: http://localhost:8080
     depends_on:
       - api-php
 
@@ -75,9 +76,32 @@ services:
       - ./config/php/php.ini:/usr/local/etc/php/php.ini
     networks:
       - sw-ing
+    depends_on:
+      - sw-ing-db
+    command: >
+      sh -c "
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
+      if [ $(php artisan migrate --pretend | grep -c 'Nothing to migrate') -eq 1 ]; then
+        echo 'Migrations already applied.';
+      else
+        echo 'Running migrations...';
+        php artisan migrate --force;
+      fi &&
+      if [ $(php artisan db:seed | grep -c 'Database seeding completed') -eq 0 ]; then
+        echo 'Database already seeded.';
+      else
+        echo 'Running seeders...';
+        php artisan db:seed --force;
+      fi &&
+      php-fpm
+      "
 
   # Frontend - NodeJS
   frontend:
+    depends_on:
+    - api-php
     build:
       context: .
       dockerfile: config/nodejs/Dockerfile
@@ -86,10 +110,11 @@ services:
     volumes:
       - ./frontend:/usr/src/frontend
       - /usr/src/frontend/node_modules
-    networks:
-      - sw-ing
     ports:
       - 3002:3000  # Frontend (port 3000): http://localhost:3002
+    command: npm run dev
+    networks:
+      - sw-ing
 
   # phpMyAdmin
   phpmyadmin:
@@ -107,6 +132,7 @@ services:
 
 networks:
   sw-ing:
+    name: sw-ing
     driver: bridge
 
 volumes:
