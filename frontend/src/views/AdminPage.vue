@@ -11,15 +11,12 @@
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
+            <v-toolbar-title class="text-h6">ADMIN PANEL</v-toolbar-title>
           </v-col>
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn href="/main">Domov</v-btn>
-            <v-btn href="/profile">Profil</v-btn>
-            <v-btn href="/">Landing</v-btn>
-            <v-btn @click="handleLogout">Odhlasit sa</v-btn>
+            <v-btn @click="handleLogout">ODHLÁSIŤ SA</v-btn>
           </v-col>
         </v-row>
       </v-container>
