@@ -25,6 +25,7 @@ export interface Conference {
     created_at: string;
     updated_at: string;
   }>;
+  role?: string | null;
 }
 
 
@@ -40,23 +41,23 @@ const needsWorkplace = computed(() => {
 
 const conferences = ref<Conference[]>([]);
 const selectedDepartments = ref<string[]>([]);
-  const selectedState = ref<string[]>([]);
+const selectedState = ref<string[]>([]);
 const selectedYears = ref<number[]>([]);
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
 
 const fetchConferences = async () => {
-  conferences.value = []; // Reset conferences array
-  const departmentIds = user.value?.departments.map((department) => department.id);
+  conferences.value = []; // Resetuj konferencie
+  const departmentIds = user.value?.departments?.map((department) => department.id);
 
   if (departmentIds && departmentIds.length > 0) {
     try {
-      // Loop through department IDs and fetch conferences
-      const conferencePromises = departmentIds.map((id) =>
-        axiosInstance.get(`/api/conferences/${id}`)
-      );
-
-      const responses = await Promise.all(conferencePromises);
-      // Combine all conferences into one array
+      const responses = await Promise.all(
+  departmentIds.map((id) => {
+    //console.log(`Fetching conferences for department ID: ${id}`);
+    return axiosInstance.get(`/api/conferences/${id}`);
+  })
+);
+//console.log('Conference responses:', responses);
       conferences.value = responses.flatMap((response) => response.data);
     } catch (error) {
       console.error('Error fetching conferences:', error);
@@ -80,14 +81,54 @@ const fetchCategories = async () => {
   }
 };
 
+const checkTask = async (conference: any) => {
+  try {
+    const response = await axiosInstance.get(`/api/conference-tasks/${conference.id}`);
+    conference.role = response.data.role;
+    //return role;
+
+  } catch (error) {
+    console.error('Error checking tasks:', error);
+    return null;
+
+  }
+}
+
+const sendRoleRequest = async (type:string, conferenceId:number) => {
+  try {
+    const response = await axiosInstance.post('/api/send-role-request', {
+      type: type,
+      conference_id: conferenceId,
+    });
+    alert(response.data.message);
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    alert('Failed to send notification.');
+  }
+}
+
+
 const publications = ref({});
 
-const fetchPublications = async (conferenceId: number) => {
-  try {
-    const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
-    publications.value[conferenceId] = response.data; // Store publications by conference ID
-  } catch (error) {
-    console.error('Error fetching publications:', error);
+const openedConferences = ref<Record<number, boolean>>({}); // Record to track opened/closed state
+  //console.log('Conferences:', conferences.value);
+  //console.log('User departments:', user.value?.departments);
+
+
+const togglePublications = async (conferenceId: number) => {
+  if (openedConferences.value[conferenceId]) {
+    // Ak je otvorené, zavri publikácie
+    delete openedConferences.value[conferenceId]; // Remove from opened conferences
+    delete publications.value[conferenceId]; // Clear publications if needed
+  } else {
+    // Ak je zatvorené, načítaj publikácie
+    try {
+      const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
+      publications.value[conferenceId] = response.data; // Store publications by conference ID
+      openedConferences.value[conferenceId] = true; // Mark as opened
+    } catch (error) {
+      console.error('Error fetching publications:', error);
+    }
   }
 };
 
@@ -121,7 +162,7 @@ const processedConferences = computed(() => {
       conf.name.toLowerCase().includes(search.value.toLowerCase())
     );
   }
-  
+
   // Krok 2: Zoradenie
   switch (sortOrder.value) {
     case 'A -> Z (Title)':
@@ -192,16 +233,16 @@ onMounted(async () => {
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Main Page</v-toolbar-title>
+            <v-toolbar-title class="text-h6">NÁSTENKA</v-toolbar-title>
           </v-col>
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
           <v-btn variant="text" href="/admin" v-if="user && user.role_id === 5">Admin Panel</v-btn>
-          <v-btn variant="text" href="/">Landing</v-btn>
+          <!--<v-btn variant="text" href="/">Landing</v-btn>-->
           <v-btn variant="text" href="/profile">Profil</v-btn>
-          <v-btn variant="text" href="/ziadosti">Ziadosti</v-btn>
-          <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>
+          <v-btn variant="text" href="/ziadosti">Žiadosti</v-btn>
+          <v-btn variant="text" @click="handleLogout">Odhlásiť sa</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -244,7 +285,7 @@ onMounted(async () => {
             <v-col cols="8">
               <v-text-field
                 v-model="search"
-                label="Search"
+                label="Vyhľadávanie"
                 prepend-inner-icon="mdi-magnify"
               ></v-text-field>
             </v-col>
@@ -267,7 +308,7 @@ onMounted(async () => {
                 :key="conference.id"
                 class="my-2"
               >
-                <v-expansion-panel-title style="background-color: #e9efff">
+                <v-expansion-panel-title style="background-color: #e9efff"     @click="checkTask(conference)">
                   <v-row no-gutters>
                     <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
                       {{ conference.department?.name }}
@@ -288,11 +329,36 @@ onMounted(async () => {
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <v-row justify="start" no-gutters>
+                    <v-col class="d-flex justify-center align-center" cols="20">
+                      <!-- Check role and render buttons accordingly -->
+                      <div v-if="conference.role === 'autor'">
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
+                          Chcem byt Recenzent
+                        </v-btn>
+                        <v-btn color="primary" @click="togglePublications(conference.id)">
+                          {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
+                        </v-btn>
+                        <v-btn color="primary">
+                          Vytvorit Publikaciu
+                        </v-btn>
+                      </div>
+                      <div v-else-if="conference.role === 'recenzent'">
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                          Chcem byt Autor
+                        </v-btn>
+                        <v-btn color="primary" @click="togglePublications(conference.id)">
+                          {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
+                        </v-btn>
+                      </div>
+                      <div v-else>
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                          Chcem byt Autor
+                        </v-btn>
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
+                          Chcem byt Recenzent
+                        </v-btn>
+                      </div>
 
-                    <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn color="primary" @click="fetchPublications(conference.id)">
-                        Open
-                      </v-btn>
                     </v-col>
                   </v-row>
                   <v-row v-if="publications[conference.id]" no-gutters class="mt-4">

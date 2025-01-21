@@ -86,9 +86,19 @@
                 <tr>
                   <td>{{ item.type }}</td>
                   <td>{{ item.user_email }}</td>
-                  <td>{{ item.university }}</td>
-                  <td>{{ item.faculty }}</td>
-                  <td>{{ item.department }}</td>
+                  <div           v-if="item.university !== 'N/A' && item.faculty !== 'N/A' && item.department !== 'N/A'">
+                    <td>{{ item.university }}</td>
+                    <td>{{ item.faculty }}</td>
+                    <td>{{ item.department }}</td>
+                  </div>
+                  <div v-else-if="item.conference !== 'N/A'">
+                    <td>{{ item.conference }}</td>
+
+                  </div>
+
+                  <td v-else>
+                    No relevant data
+                  </td>
                   <td>{{ item.state }}</td>
                   <td>{{ new Date(item.created_at).toLocaleString() }}</td>
                   <td class="text-center">
@@ -172,6 +182,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 import { ref } from "vue";
 import axiosInstance from "../api/axiosInstance";
+import {useAuthStore} from "@/stores/authStore";
 
 type NotificationItem = {
   type: string;
@@ -181,6 +192,7 @@ type NotificationItem = {
   department: string;
   state: string;
   created_at: string;
+  conference?: string | null;
 };
 
 const notifications = ref<NotificationItem[]>([]);
@@ -214,11 +226,12 @@ const showChangeRoleDialog = ref(false); // Dialog visibility toggle
 const selectedRole = ref<string>(""); // Currently selected role
 const selectedUser = ref<{ id: number; role: string; name: string } | null>(null); // User whose role is being changed
 const roles = ref(["user", "reviewer", "admin"]); // Hardcoded role options
+const authStore = useAuthStore();
 
 // Methods
-const handleLogout = () => {
-  sessionStorage.removeItem("user");
-  window.location.href = "/";
+const handleLogout = async () => {
+  await authStore.logout(); // Počká na dokončenie logout
+  router.push('/'); // Presmeruje na landing page
 };
 //const notifications = ref([]);
 const notificationHeaders = [
@@ -344,6 +357,7 @@ const updateNotificationState = async (notification, newState) => {
   }
 };
 
+
 </script>
 
 
@@ -376,7 +390,7 @@ content-section {
 
 .content-card {
   width: 100%;
-  max-width: 60vw;
+  max-width: 80vw;
   margin: 0 auto;
   border-radius: 10px;
 }

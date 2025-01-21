@@ -37,6 +37,26 @@ class NotificationSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'type' => 'Poziadanie o role Autor',
+                'user_id' => 2,
+                'data' => json_encode([
+                    'conference_id' => 3,
+                ]),
+                'state' => 'sent',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'type' => 'Poziadanie o role Recenzent',
+                'user_id' => 2,
+                'data' => json_encode([
+                    'conference_id' => 4,
+                ]),
+                'state' => 'sent',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

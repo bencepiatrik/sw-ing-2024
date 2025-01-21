@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionControll
 //conferences
 Route::get('/conferences', [ConferenceController::class, 'index']);
 
-Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
+Route::get('/conferences/{department_id}', [ConferenceController::class, 'show']);
 
 Route::get('/createconference', [ConferenceController::class, 'index']);
 
@@ -61,6 +61,9 @@ Route::post('/conferences/by-departments', [ConferenceController::class, 'findFo
 Route::post('/conferences', [ConferenceController::class, 'store']);
 
 Route::put('/conferences/{id}', [ConferenceController::class, 'update']);
+
+Route::get('/conference-tasks/{conferenceId}', [ConferenceController::class, 'checkUserTasks']);
+
 
 
 //works
@@ -91,6 +94,9 @@ Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [Notificat
 Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
     return $request->user()->notifications;
 });
+
+Route::post('/send-role-request', [NotificationController::class, 'sendRoleRequestNotification']);
+
 
 
 //places
