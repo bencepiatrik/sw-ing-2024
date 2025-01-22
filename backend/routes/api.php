@@ -115,4 +115,6 @@ Route::post('/publications', [PublicationController::class, 'store']);
 
 Route::post('/reviews', [ReviewController::class, 'store']);
 
+Route::get('/reviews/{publicationId}', [ReviewController::class, 'show']);
+
 Route::get('/publication/{id}', [PublicationController::class, 'show']);

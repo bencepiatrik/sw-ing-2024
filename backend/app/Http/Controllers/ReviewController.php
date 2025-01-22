@@ -39,4 +39,15 @@ class ReviewController extends Controller
             'publication' => $publication,
         ], 201);
     }
+
+    public function show($publicationId)
+    {
+        $review = Review::with(['author', 'reviewer'])->where('publication_id', $publicationId)->firstOrFail();
+
+        $review->review_data = json_decode($review->review_data);
+
+        return response()->json($review);
+    }
+
+
 }

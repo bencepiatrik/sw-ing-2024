@@ -28,10 +28,9 @@ export interface Conference {
   role?: string | null;
 }
 
-
-
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
+import {reactive} from "@vue/runtime-dom";
 const router = useRouter();
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
@@ -189,6 +188,58 @@ async function submitForm(conferenceId) {
     console.error('Chyba pri vytváraní publikácie:', error);
   }
 }
+const isViewReviewModalOpen = ref(false);
+//funguje len s reactive deklaraciou
+const currentReview = reactive({});
+async function viewReview(publicationId) {
+  try {
+    if (!publicationId) {
+      console.error('Invalid publication ID');
+      return;
+    }
+
+    // Fetch the existing review for the publication
+    const response = await axiosInstance.get(`/api/reviews/${publicationId}`);
+    const reviewData = response.data.review_data;
+
+    console.log(reviewData);
+
+    Object.assign(currentReview, {
+      aktualnost: reviewData.aktualnost || null,
+      zorientovanie: reviewData.zorientovanie || null,
+      vhodnostMetod: reviewData.vhodnostMetod || null,
+      rozsahUroven: reviewData.rozsahUroven || null,
+      analyzaInterpretacia: reviewData.analyzaInterpretacia || null,
+      prehladnostLogika: reviewData.prehladnostLogika || null,
+      formalnaJazykova: reviewData.formalnaJazykova || null,
+      strongPoints: reviewData.strongPoints || '',
+      weakPoints: reviewData.weakPoints || '',
+      missingTitle: reviewData.missingTitle || false,
+      missingAuthorName: reviewData.missingAuthorName || false,
+      missingEmail: reviewData.missingEmail || false,
+      missingAbstract: reviewData.missingAbstract || false,
+      invalidAbstractLength: reviewData.invalidAbstractLength || false,
+      missingKeywords: reviewData.missingKeywords || false,
+      missingSections: reviewData.missingSections || false,
+      missingReferences: reviewData.missingReferences || false,
+      missingTextReferences: reviewData.missingTextReferences || false,
+      missingImageReferences: reviewData.missingImageReferences || false,
+      missingImageDescriptions: reviewData.missingImageDescriptions || false,
+    });
+
+    currentReview.authorName = `${response.data.author.name} ${response.data.author.surname}`;
+    currentReview.reviewerName = `${response.data.reviewer.name} ${response.data.reviewer.surname}`;
+    currentReview.time = response.data.time;
+
+    // Open the modal
+    isViewReviewModalOpen.value = true;
+
+    console.log('Review data loaded for publication ID:', publicationId);
+  } catch (error) {
+    console.error('Error fetching review:', error);
+  }
+}
+
 
 const fetchConferences = async () => {
   conferences.value = []; // Resetuj konferencie
@@ -803,6 +854,126 @@ onMounted(async () => {
                                 </v-card-actions>
                               </v-card>
                             </v-dialog>
+
+                          </v-col>
+                          <v-col
+                            v-if="publication.status === 'prijatá' || publication.status === 'odmietnutá'"
+                            class="mt-2"
+                            cols="6"
+                          >
+                            <v-btn
+                              color="primary"
+                              @click="viewReview(publication.id)"
+                            >
+                              Zobraziť Hodnotenie
+                            </v-btn>
+                            <v-dialog v-model="isViewReviewModalOpen" max-width="800px">
+                              <v-card>
+                                <v-card-title class="text-h6 font-weight-bold">
+                                  Zobraziť Hodnotenie
+                                </v-card-title>
+                                <v-card-text>
+                                  <!-- Author and Reviewer Info -->
+                                  <v-row>
+                                    <v-col cols="12">
+                                      <p><strong>Autor:</strong> {{ currentReview.authorName }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Recenzent:</strong> {{ currentReview.reviewerName }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Čas Hodnotenia:</strong> {{ new Date(currentReview.time).toLocaleString() }}</p>
+                                    </v-col>
+                                  </v-row>
+
+                                  <v-row>
+                                    <!-- Aktualnosť -->
+                                    <v-col cols="12">
+                                      <p><strong>Aktuálnosť:</strong> {{ currentReview.aktualnost }}</p>
+                                    </v-col>
+
+                                    <!-- Zorientovanie -->
+                                    <v-col cols="12">
+                                      <p><strong>Zorientovanie:</strong> {{ currentReview.zorientovanie }}</p>
+                                    </v-col>
+
+                                    <!-- Vhodnosť Metód -->
+                                    <v-col cols="12">
+                                      <p><strong>Vhodnosť Metód:</strong> {{ currentReview.vhodnostMetod }}</p>
+                                    </v-col>
+
+                                    <!-- Rozsah a Úroveň -->
+                                    <v-col cols="12">
+                                      <p><strong>Rozsah a Úroveň:</strong> {{ currentReview.rozsahUroven }}</p>
+                                    </v-col>
+
+                                    <!-- Analýza a Interpretácia -->
+                                    <v-col cols="12">
+                                      <p><strong>Analýza a Interpretácia:</strong> {{ currentReview.analyzaInterpretacia }}</p>
+                                    </v-col>
+
+                                    <!-- Prehľadnosť a Logika -->
+                                    <v-col cols="12">
+                                      <p><strong>Prehľadnosť a Logika:</strong> {{ currentReview.prehladnostLogika }}</p>
+                                    </v-col>
+
+                                    <!-- Formálna a Jazyková Úroveň -->
+                                    <v-col cols="12">
+                                      <p><strong>Formálna a Jazyková Úroveň:</strong> {{ currentReview.formalnaJazykova }}</p>
+                                    </v-col>
+
+                                    <!-- Missing Items -->
+                                    <v-col cols="12">
+                                      <p><strong>Chýba Názov:</strong> {{ currentReview.missingTitle ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýba Meno Autora:</strong> {{ currentReview.missingAuthorName ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýba Email:</strong> {{ currentReview.missingEmail ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýba Abstrakt:</strong> {{ currentReview.missingAbstract ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Abstrakt Dĺžka Neplatná:</strong> {{ currentReview.invalidAbstractLength ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Kľúčové Slová:</strong> {{ currentReview.missingKeywords ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Časti Textu:</strong> {{ currentReview.missingSections ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Referencie:</strong> {{ currentReview.missingReferences ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Textové Referencie:</strong> {{ currentReview.missingTextReferences ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Referencie k Obrázkom:</strong> {{ currentReview.missingImageReferences ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+                                    <v-col cols="12">
+                                      <p><strong>Chýbajú Popisy k Obrázkom:</strong> {{ currentReview.missingImageDescriptions ? 'Áno' : 'Nie' }}</p>
+                                    </v-col>
+
+                                    <!-- Strong Points -->
+                                    <v-col cols="12">
+                                      <p><strong>Silné Stránky:</strong> {{ currentReview.strongPoints }}</p>
+                                    </v-col>
+
+                                    <!-- Weak Points -->
+                                    <v-col cols="12">
+                                      <p><strong>Slabé Stránky:</strong> {{ currentReview.weakPoints }}</p>
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-btn color="primary" @click="isViewReviewModalOpen = false">Zavrieť</v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+
 
                           </v-col>
                         </v-row>
