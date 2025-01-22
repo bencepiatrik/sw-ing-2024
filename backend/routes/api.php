@@ -121,5 +121,6 @@ Route::put('/publications/{id}', [PublicationController::class, 'update']);
 Route::post('/publications/{id}/upload', [PublicationController::class, 'upload']);
 
 Route::get('/publication/{id}', [PublicationController::class, 'show']);
+Route::get('/publications/{id}/download', [PublicationController::class, 'download']);
 
 Route::delete('/publications/{id}/remove-file', [PublicationController::class, 'removeFile']);

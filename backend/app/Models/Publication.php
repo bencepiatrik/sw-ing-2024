@@ -28,6 +28,7 @@ class Publication extends Model
         'keywords',
         'user_id',
         'file',
+        'file_name',
         'status',
     ];
 

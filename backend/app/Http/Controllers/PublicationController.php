@@ -72,6 +72,32 @@ class PublicationController extends Controller
     }
 
 
+    public function download($id)
+    {
+        $publication = Publication::find($id);
+
+        if (!$publication) {
+            return response()->json(['error' => 'Publication not found'], 404);
+        }
+
+        if (!$publication->file || !Storage::disk('public')->exists($publication->file)) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+
+        $filePath = storage_path('app/public/' . $publication->file);
+        $mimeType = Storage::disk('public')->mimeType($publication->file);
+
+        return response()->streamDownload(function () use ($filePath) {
+            readfile($filePath);
+        }, $publication->file_name, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'attachment; filename="' . $publication->file_name . '"',
+        ]);
+    }
+
+
+
+
 
     public function removeFile(Request $request, $id)
     {
@@ -112,7 +138,7 @@ class PublicationController extends Controller
             'abstract' => 'required|string',
             'keywords' => 'required|string',
             'conference_id' => 'required|integer|exists:conferences,id',
-            'file' => 'nullable|file|mimes:pdf,txt|max:10240', // Optional file
+            'file' => 'nullable|file|mimes:pdf,docx|max:10240', // Optional file
         ]);
 
         // Handle file upload if provided
@@ -146,7 +172,7 @@ class PublicationController extends Controller
     {
         // Validate the file
         $request->validate([
-            'file' => 'required|file|mimes:pdf,txt|max:10240',
+            'file' => 'required|file|mimes:pdf,docx|max:10240',
         ]);
 
         // Find the publication by ID

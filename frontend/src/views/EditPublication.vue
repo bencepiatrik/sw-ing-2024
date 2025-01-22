@@ -44,10 +44,10 @@
               ></v-textarea>
 
               <div>
-                <label for="file">Nahrať súbor (PDF alebo TXT):</label>
-                <input id="file" type="file" @change="handleFileChange" accept=".pdf,.txt" />
+                <label for="file">Nahrať súbor (PDF alebo DOCX):</label>
+                <input id="file" type="file" @change="handleFileChange" accept=".pdf,.docx" />
                 <p v-if="formData.fileName">
-                  Aktuálny súbor: <a :href="getFileUrl(formData.file)" target="_blank">{{ formData.fileName }}</a>
+                  Aktuálny súbor: <a>{{ formData.fileName }}</a>
                 </p>
               </div>
 
