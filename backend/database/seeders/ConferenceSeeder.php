@@ -8,12 +8,7 @@ use Illuminate\Support\Carbon;
 
 class ConferenceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         $conferences = [
             [
@@ -68,15 +63,18 @@ class ConferenceSeeder extends Seeder
         ];
 
         foreach ($conferences as $conference) {
-            DB::table('conferences')->insert([
-                'name' => $conference['name'],
-                'year' => $conference['year'],
-                'type' => $conference['type'],
-                'department_id' => $conference['department_id'],
-                'expiration_date' => $conference['expiration_date'],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
+            // Skontrolujeme, či konferencia už existuje
+            if (!DB::table('conferences')->where('name', $conference['name'])->exists()) {
+                DB::table('conferences')->insert([
+                    'name' => $conference['name'],
+                    'year' => $conference['year'],
+                    'type' => $conference['type'],
+                    'department_id' => $conference['department_id'],
+                    'expiration_date' => $conference['expiration_date'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
         }
     }
 }

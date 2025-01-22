@@ -8,12 +8,7 @@ use Illuminate\Support\Carbon;
 
 class PublicationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         $publications = [
             [
@@ -28,7 +23,6 @@ class PublicationSeeder extends Seeder
                 'state' => 'Prijatá',
                 'content' => 'Práca sa zaoberá vývojom a optimalizáciou cloudových technológií...',
             ],
-
             [
                 'conference_id' => 2,
                 'title' => 'Aplikácia blockchain technológie',
@@ -41,7 +35,6 @@ class PublicationSeeder extends Seeder
                 'state' => 'Prezentovaná',
                 'content' => 'Práca analyzuje nové trendy v oblasti robotiky a AI...',
             ],
-
             [
                 'conference_id' => 3,
                 'title' => 'Strojové učenie v praxi',
@@ -60,7 +53,6 @@ class PublicationSeeder extends Seeder
                 'state' => 'Prijatá',
                 'content' => 'Práca sa zameriava na použitie predikčných modelov v oblasti Data Science...',
             ],
-
             [
                 'conference_id' => 4,
                 'title' => 'Prístupy k ochrane údajov',
@@ -70,14 +62,20 @@ class PublicationSeeder extends Seeder
         ];
 
         foreach ($publications as $publication) {
-            DB::table('publications')->insert([
-                'conference_id' => $publication['conference_id'],
-                'title' => $publication['title'],
-                'state' => $publication['state'],
-                'content' => $publication['content'],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
+            // Skontrolujeme, či publikácia už existuje
+            if (!DB::table('publications')
+                ->where('conference_id', $publication['conference_id'])
+                ->where('title', $publication['title'])
+                ->exists()) {
+                DB::table('publications')->insert([
+                    'conference_id' => $publication['conference_id'],
+                    'title' => $publication['title'],
+                    'state' => $publication['state'],
+                    'content' => $publication['content'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
         }
     }
 }

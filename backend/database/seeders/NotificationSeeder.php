@@ -4,15 +4,13 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class NotificationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('notifications')->insert([
+        $notifications = [
             [
                 'type' => 'Poziadanie o pracoviska',
                 'user_id' => 1,
@@ -22,8 +20,8 @@ class NotificationSeeder extends Seeder
                     'department_id' => 34
                 ]),
                 'state' => 'sent',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'type' => 'Poziadanie o pracoviska',
@@ -34,8 +32,8 @@ class NotificationSeeder extends Seeder
                     'department_id' => 10
                 ]),
                 'state' => 'sent',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'type' => 'Poziadanie o role Autor',
@@ -44,8 +42,8 @@ class NotificationSeeder extends Seeder
                     'conference_id' => 3,
                 ]),
                 'state' => 'sent',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'type' => 'Poziadanie o role Recenzent',
@@ -54,9 +52,19 @@ class NotificationSeeder extends Seeder
                     'conference_id' => 4,
                 ]),
                 'state' => 'sent',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
-        ]);
+        ];
+
+        foreach ($notifications as $notification) {
+            if (!DB::table('notifications')
+                ->where('type', $notification['type'])
+                ->where('user_id', $notification['user_id'])
+                ->where('data', $notification['data'])
+                ->exists()) {
+                DB::table('notifications')->insert($notification);
+            }
+        }
     }
 }

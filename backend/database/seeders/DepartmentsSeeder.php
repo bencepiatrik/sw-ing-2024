@@ -10,12 +10,7 @@ use App\Models\University;
 
 class DepartmentsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         $universities = [
             'Univerzita sv. Cyrila a Metoda v Trnave' => [
@@ -177,17 +172,25 @@ class DepartmentsSeeder extends Seeder
 
             if ($university) {
                 foreach ($faculties as $facultyName => $departmentList) {
-                    $faculty = Faculty::where('name', $facultyName)->where('uni_id', $university->id)->first();
+                    $faculty = Faculty::where('name', $facultyName)
+                        ->where('uni_id', $university->id)
+                        ->first();
 
                     if ($faculty) {
                         foreach ($departmentList as $departmentName) {
-                            DB::table('departments')->insert([
-                                'uni_id' => $university->id,
-                                'faculty_id' => $faculty->id,
-                                'name' => $departmentName,
-                                'created_at' => Carbon::now(),
-                                'updated_at' => Carbon::now(),
-                            ]);
+                            // Skontrolujeme, či katedra už existuje
+                            if (!DB::table('departments')
+                                ->where('name', $departmentName)
+                                ->where('faculty_id', $faculty->id)
+                                ->exists()) {
+                                DB::table('departments')->insert([
+                                    'uni_id' => $university->id,
+                                    'faculty_id' => $faculty->id,
+                                    'name' => $departmentName,
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                            }
                         }
                     }
                 }

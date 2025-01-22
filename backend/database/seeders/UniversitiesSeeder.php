@@ -8,12 +8,7 @@ use Illuminate\Support\Carbon;
 
 class UniversitiesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         $universities = [
             'Univerzita Konštantína Filozofa v Nitre',
@@ -22,11 +17,15 @@ class UniversitiesSeeder extends Seeder
         ];
 
         foreach ($universities as $university) {
-            DB::table('universities')->insert([
-                'name' => $university,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
+            // Skontrolujeme, či univerzita už existuje
+            if (!DB::table('universities')->where('name', $university)->exists()) {
+                DB::table('universities')->insert([
+                    'name' => $university,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
         }
     }
 }
+
