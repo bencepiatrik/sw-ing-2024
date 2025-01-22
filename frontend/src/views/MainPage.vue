@@ -60,6 +60,58 @@ const router = useRouter();
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 
+const dialogVisible = ref(false);
+const selectedPublication = ref({
+  title: "",
+  abstract: "",
+  keywords: "",
+  file: "",
+  file_name: "",
+});
+
+const downloadFile = async (publicationId) => {
+  try {
+    const response = await axiosInstance.get(`/api/publications/${publicationId}/download`, {
+      responseType: 'blob',
+    });
+
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    const contentDisposition = response.headers['content-disposition'];
+    let filename = 'test';
+    console.log(response);
+    if (contentDisposition && contentDisposition.includes('filename=')) {
+      filename = contentDisposition
+        .split('filename=')[1]
+        .trim()
+        .replace(/(^["']|["']$)/g, '');
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Failed to download file:', error);
+    alert('Chyba pri sťahovaní súboru.');
+  }
+};
+
+const viewPublication = async (publicationId) => {
+  try {
+    const response = await axiosInstance.get(`/api/publication/${publicationId}`);
+    selectedPublication.value = response.data;
+    dialogVisible.value = true;
+  } catch (error) {
+    console.error("Chyba pri načítaní publikácie:", error);
+    alert("Nepodarilo sa načítať publikáciu.");
+  }
+};
 
 const needsWorkplace = computed(() => {
   return !user.value?.departments || user.value.departments.length === 0;
@@ -109,7 +161,6 @@ function openReviewForm(publicationId) {
   showReviewForm.value = true;
 }
 
-// Closes the review modal
 function closeReviewForm() {
   showReviewForm.value = false;
   resetReviewForm();
@@ -123,7 +174,6 @@ function resetReviewForm() {
   reviewForm.value.analyzaInterpretacia = null;
   reviewForm.value.prehladnostLogika = null;
   reviewForm.value.formalnaJazykova = null;
-  // Resetting new true/false fields
   reviewForm.value.missingTitle = false;
   reviewForm.value.missingAuthorName = false;
   reviewForm.value.missingEmail = false;
@@ -135,7 +185,6 @@ function resetReviewForm() {
   reviewForm.value.missingTextReferences = false;
   reviewForm.value.missingImageReferences = false;
   reviewForm.value.missingImageDescriptions = false;
-  // Reset new fields
   reviewForm.value.strongPoints = '';
   reviewForm.value.weakPoints = '';
   reviewForm.value.status = '';
@@ -160,7 +209,6 @@ async function submitReview() {
         analyzaInterpretacia: reviewForm.value.analyzaInterpretacia,
         prehladnostLogika: reviewForm.value.prehladnostLogika,
         formalnaJazykova: reviewForm.value.formalnaJazykova,
-        // Adding new true/false fields
         missingTitle: reviewForm.value.missingTitle,
         missingAuthorName: reviewForm.value.missingAuthorName,
         missingEmail: reviewForm.value.missingEmail,
@@ -172,7 +220,6 @@ async function submitReview() {
         missingTextReferences: reviewForm.value.missingTextReferences,
         missingImageReferences: reviewForm.value.missingImageReferences,
         missingImageDescriptions: reviewForm.value.missingImageDescriptions,
-        // Add new fields
         strongPoints: reviewForm.value.strongPoints,
         weakPoints: reviewForm.value.weakPoints,
       },
@@ -180,8 +227,6 @@ async function submitReview() {
     };
 
     const response = await axiosInstance.post('/api/reviews', reviewData);
-    console.log('Review submitted successfully:', response.data);
-
     resetReviewForm();
     closeReviewForm();
   } catch (error) {
@@ -205,9 +250,6 @@ async function submitForm(conferenceId) {
       keywords: form.value.klucoveSlova,
       conference_id: conferenceId,
     });
-    console.log('Publikácia vytvorená:', response.data);
-
-    // Reset the form after submission
     resetForm();
   } catch (error) {
     console.error('Chyba pri vytváraní publikácie:', error);
@@ -248,11 +290,8 @@ async function viewReview(publicationId) {
       return;
     }
 
-    // Fetch the existing review for the publication
     const response = await axiosInstance.get(`/api/reviews/${publicationId}`);
     const reviewData = response.data.review_data;
-
-    console.log(reviewData);
 
     Object.assign(currentReview, {
       aktualnost: reviewData.aktualnost || null,
@@ -281,10 +320,8 @@ async function viewReview(publicationId) {
     currentReview.reviewerName = `${response.data.reviewer.name} ${response.data.reviewer.surname}`;
     currentReview.time = response.data.time;
 
-    // Open the modal
     isViewReviewModalOpen.value = true;
 
-    console.log('Review data loaded for publication ID:', publicationId);
   } catch (error) {
     console.error('Error fetching review:', error);
   }
@@ -299,11 +336,9 @@ const fetchConferences = async () => {
     try {
       const responses = await Promise.all(
   departmentIds.map((id) => {
-    //console.log(`Fetching conferences for department ID: ${id}`);
     return axiosInstance.get(`/api/conferences/${id}`);
   })
 );
-//console.log('Conference responses:', responses);
       conferences.value = responses.flatMap((response) => response.data);
     } catch (error) {
       console.error('Error fetching conferences:', error);
@@ -356,22 +391,19 @@ const sendRoleRequest = async (type:string, conferenceId:number) => {
 
 const publications = ref({});
 
-const openedConferences = ref<Record<number, boolean>>({}); // Record to track opened/closed state
-  //console.log('Conferences:', conferences.value);
-  //console.log('User departments:', user.value?.departments);
-
+const openedConferences = ref<Record<number, boolean>>({});
 
 const togglePublications = async (conferenceId: number) => {
   if (openedConferences.value[conferenceId]) {
     // Ak je otvorené, zavri publikácie
-    delete openedConferences.value[conferenceId]; // Remove from opened conferences
-    delete publications.value[conferenceId]; // Clear publications if needed
+    delete openedConferences.value[conferenceId];
+    delete publications.value[conferenceId];
   } else {
     // Ak je zatvorené, načítaj publikácie
     try {
       const response = await axiosInstance.get(`/api/publications?conference_id=${conferenceId}`);
-      publications.value[conferenceId] = response.data; // Store publications by conference ID
-      openedConferences.value[conferenceId] = true; // Mark as opened
+      publications.value[conferenceId] = response.data;
+      openedConferences.value[conferenceId] = true;
     } catch (error) {
       console.error('Error fetching publications:', error);
     }
@@ -425,19 +457,14 @@ const processedConferences = computed(() => {
 });
 
 
-// Funkcia pre otvorenie detailu kategórie
-const openCategoryPage = (categoryId: number) => {
-  router.push(`/categories/${categoryId}`);
-};
-
 const editPublication = (publicationId: number) => {
   router.push(`/edit-publication/${publicationId}`);
 };
 
 // Funkcia pre odhlásenie
 const handleLogout = async () => {
-  await authStore.logout(); // Počká na dokončenie logout
-  router.push('/'); // Presmeruje na landing page
+  await authStore.logout();
+  router.push('/');
 };
 
 // Sleduj, či sa stav autentifikácie zmenil
@@ -669,16 +696,37 @@ onMounted(async () => {
                             <p>{{ publication.status }}</p>
                           </v-col>
                           <v-col
-                            v-if="publication.status === 'vytvorená' || publication.status === 'odovzdaná' && conference.role === 'autor'"
+                            v-if="conference.role === 'autor'"
                             class="mt-2"
                             cols="4"
                           >
                             <v-btn
                               color="primary"
-                              @click="viewReview(publication.id)"
+                              @click="viewPublication(publication.id)"
                             >
                               Zobraziť Publikáciu
                             </v-btn>
+                            <!-- Dialog for Viewing Publication -->
+                            <v-dialog v-model="dialogVisible" max-width="600px">
+                              <v-card>
+                                <v-card-title>
+                                  <span class="text-h5">{{ selectedPublication.title }}</span>
+                                </v-card-title>
+                                <v-card-text>
+                                  <p><strong>Abstrakt:</strong> {{ selectedPublication.abstract }}</p>
+                                  <p><strong>Kľúčové slová:</strong> {{ selectedPublication.keywords }}</p>
+                                  <p v-if="selectedPublication.file">
+                                    <strong>Súbor:</strong>
+                                    <a
+                                      @click="downloadFile(publication.id)"
+                                    >Stiahnuť súbor</a>
+                                  </p>
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-btn color="primary" @click="dialogVisible = false">Zavrieť</v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
                           </v-col>
                           <v-col v-if="publication.status === 'odovzdaná' && conference.role === 'recenzent'" class="mt-2" cols="6">
                             <v-btn color="primary" @click="openReviewForm(publication.id)">
@@ -1043,7 +1091,7 @@ onMounted(async () => {
                           <v-col cols="2">
                             <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
                             <v-btn
-                              v-if="user && publication.user_id === user.id"
+                              v-if="user && publication.user_id === user.id && publication.status !== 'odovzdaná' && publication.status !== 'odmietnutá'"
                               color="primary"
                               @click="editPublication(publication.id)"
                             >

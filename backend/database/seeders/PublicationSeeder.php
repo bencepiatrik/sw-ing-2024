@@ -17,7 +17,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => 'IT, trends, analysis',
                 'user_id' => 1,
                 'conference_id' => 1,
-                'files' => null,
+                'file' => '',
                 'status' => 'prijatá',
             ],
             [
@@ -26,7 +26,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => 'cloud, optimization, technology',
                 'user_id' => 2,
                 'conference_id' => 1,
-                'files' => null,
+                'file' => '',
                 'status' => 'odovzdaná',
             ],
             [
@@ -35,7 +35,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => 'blockchain, technology, application',
                 'user_id' => 3,
                 'conference_id' => 2,
-                'files' => null,
+                'file' => '',
                 'status' => 'vytvorená',
             ],
             [
@@ -44,7 +44,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => 'robotics, AI, trends',
                 'user_id' => 4,
                 'conference_id' => 2,
-                'files' => null,
+                'file' => '',
                 'status' => 'prijatá',
             ],
             [
@@ -53,7 +53,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => 'machine learning, industry, applications',
                 'user_id' => 3,
                 'conference_id' => 3,
-                'files' => null,
+                'file' => '',
                 'status' => 'odmietnutá',
             ],
         ];
@@ -65,7 +65,7 @@ class PublicationSeeder extends Seeder
                 'keywords' => $publication['keywords'],
                 'user_id' => $publication['user_id'],
                 'conference_id' => $publication['conference_id'],
-                'files' => $publication['files'],
+                'file' => $publication['file'],
                 'status' => $publication['status'],
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

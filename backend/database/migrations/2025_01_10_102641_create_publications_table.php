@@ -20,7 +20,7 @@ class CreatePublicationsTable extends Migration
             $table->text('keywords');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('conference_id');
-            $table->json('files')->nullable();
+            $table->string('file')->nullable();
             $table->enum('status', ['prijatá', 'odmietnutá', 'odovzdaná', 'vytvorená'])->default('vytvorená');
             $table->timestamps();
 
