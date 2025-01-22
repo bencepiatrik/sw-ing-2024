@@ -30,53 +30,48 @@ class PublicationController extends Controller
             return response()->json(['message' => 'Publication not found'], 404);
         }
 
-        return response()->json($publication);
+        return response()->json([
+            'id' => $publication->id,
+            'title' => $publication->title,
+            'abstract' => $publication->abstract,
+            'keywords' => $publication->keywords,
+            'conference_id' => $publication->conference_id,
+            'file' => $publication->file, // Stored path
+            'file_name' => $publication->file_name, // Original filename
+        ]);
     }
+
 
     public function update(Request $request, $id)
     {
-        logger()->info('Prijaté údaje:', $request->all());
-        logger()->info('Súbory:', $request->file());
-        // Validácia vstupu
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'abstract' => 'required|string',
-                'keywords' => 'required|string',
-                'conference_id' => 'required|integer|exists:conferences,id',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            logger()->error('Validácia zlyhala:', $e->errors());
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-        logger()->info('Validácia prešla, údaje:', $validated);
-        // Nájdeme publikáciu pre úpravu
-        $publication = Publication::where('id', $id)
-            ->where('user_id', auth()->id()) // Overenie vlastníctva
-            ->firstOrFail();
-    
-        // Aktualizácia údajov publikácie
-        $publication->update($validated);
-    
-        // Spracovanie súborov, ak boli pridané nové
-        if ($request->hasFile('files')) {
-            $newFiles = [];
-            foreach ($request->file('files') as $file) {
-                $filePath = $file->store('publications', 'public');
-                $newFiles[] = $filePath;
-            }
-        
-            $existingFiles = json_decode($publication->files, true) ?? [];
-            $publication->files = json_encode(array_merge($existingFiles, $newFiles));
-            $publication->save();
-        }
-    
+        // Validate the JSON payload
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'abstract' => 'required|string',
+            'keywords' => 'required|string',
+            'conference_id' => 'required|integer|exists:conferences,id',
+            'set_status' => 'nullable|string|in:odovzdaná', // Optional status change
+        ]);
+
+        // Find the publication by ID
+        $publication = Publication::findOrFail($id);
+
+        // Update the publication fields
+        $publication->update([
+            'title' => $validated['title'],
+            'abstract' => $validated['abstract'],
+            'keywords' => $validated['keywords'],
+            'conference_id' => $validated['conference_id'],
+            'status' => $validated['set_status'] ?? $publication->status, // Update status if provided
+        ]);
+
         return response()->json([
-            'message' => 'Publikácia bola úspešne aktualizovaná.',
+            'message' => 'Publication updated successfully.',
             'publication' => $publication,
         ]);
-    
     }
+
+
 
     public function removeFile(Request $request, $id)
     {
@@ -111,26 +106,75 @@ class PublicationController extends Controller
 
     public function store(Request $request)
     {
-        // Validácia vstupu
-        $request->validate([
+        // Validate request data
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'abstract' => 'required|string',
             'keywords' => 'required|string',
             'conference_id' => 'required|integer|exists:conferences,id',
+            'file' => 'nullable|file|mimes:pdf,txt|max:10240', // Optional file
         ]);
 
-        // Vytvorenie novej publikácie
+        // Handle file upload if provided
+        $filePath = null;
+        $originalFileName = null;
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->store('publications', 'public');
+            $originalFileName = $file->getClientOriginalName(); // Get the original filename
+        }
+
+        // Create a new publication record
         $publication = Publication::create([
-            'title' => $request->title,
-            'abstract' => $request->abstract,
-            'keywords' => $request->keywords,
-            'conference_id' => $request->conference_id,
-            'user_id' => auth()->id(),
+            'title' => $validated['title'],
+            'abstract' => $validated['abstract'],
+            'keywords' => $validated['keywords'],
+            'conference_id' => $validated['conference_id'],
+            'user_id' => auth()->id(), // Assuming logged-in user
+            'file' => $filePath, // Stored file path
+            'file_name' => $originalFileName, // Original file name
         ]);
 
         return response()->json([
-            'message' => 'Publikácia bola úspešne vytvorená.',
+            'message' => 'Publication created successfully.',
             'publication' => $publication,
-        ], 201);
+        ]);
     }
+
+
+    public function upload(Request $request, $id)
+    {
+        // Validate the file
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,txt|max:10240',
+        ]);
+
+        // Find the publication by ID
+        $publication = Publication::findOrFail($id);
+
+        // Delete old file if it exists
+        if ($publication->file) {
+            Storage::disk('public')->delete($publication->file);
+        }
+
+        // Save the new file
+        $file = $request->file('file');
+        $filePath = $file->store('publications', 'public');
+        $originalFileName = $file->getClientOriginalName(); // Get the original filename
+
+        // Update the file path and original filename in the publication record
+        $publication->file = $filePath;
+        $publication->file_name = $originalFileName;
+        $publication->save();
+
+        return response()->json([
+            'message' => 'File uploaded successfully.',
+            'file' => $filePath,
+            'original_file_name' => $originalFileName,
+        ]);
+    }
+
+
+
+
 }

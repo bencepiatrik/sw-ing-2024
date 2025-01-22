@@ -1043,7 +1043,7 @@ onMounted(async () => {
                           <v-col cols="2">
                             <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
                             <v-btn
-                              v-if="user && publication.user_id === user.id"
+                              v-if="user && publication.user_id === user.id && publication.status !== 'odovzdaná'"
                               color="primary"
                               @click="editPublication(publication.id)"
                             >
