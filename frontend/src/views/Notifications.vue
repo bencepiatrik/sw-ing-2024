@@ -1,8 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import axiosInstance from '../api/axiosInstance';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/authStore';
+import { storeToRefs } from 'pinia';
 
-const notifications = ref([]);
+const router = useRouter();
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
+
+interface Notification {
+  id: number;
+  type: string;
+  state: string;
+  created_at: string;
+}
+
+const notifications = ref<Notification[]>([]);
+
 const headers = [
   { text: 'Type', value: 'type' },
   { text: 'State', value: 'state' },
@@ -24,9 +39,13 @@ const fetchNotifications = async () => {
   }
 };
 
+const handleLogout = async () => {
+  await authStore.logout(); // Počká na dokončenie logout
+  router.push('/'); // Presmeruje na landing page
+};
+
 onMounted(fetchNotifications);
 </script>
-
 
 <template>
   <v-app style="background-color: #D9DCD6;">
@@ -45,8 +64,7 @@ onMounted(fetchNotifications);
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn variant="text" href="/">Landing</v-btn>
-            <v-btn variant="text" href="/main">Domov</v-btn>
+            <v-btn variant="text" href="/main" v-if="user && user.role_id !== 5">Domov</v-btn>
             <v-btn variant="text" href="/admin" v-if="user && user.role_id === 5">Admin Panel</v-btn>
             <v-btn variant="text" href="/profile">Profil</v-btn>
             <v-btn variant="text" @click="handleLogout">Odhlasit sa</v-btn>

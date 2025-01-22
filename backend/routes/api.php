@@ -62,6 +62,9 @@ Route::post('/conferences', [ConferenceController::class, 'store']);
 
 Route::put('/conferences/{id}', [ConferenceController::class, 'update']);
 
+Route::get('/conference-tasks/{conferenceId}', [ConferenceController::class, 'checkUserTasks']);
+
+
 
 //works
 Route::post('/works', [WorkController::class, 'store']);
@@ -91,6 +94,9 @@ Route::middleware(['auth:sanctum'])->put('/notifications/{id}/state', [Notificat
 Route::middleware(['auth:sanctum'])->get('/user-notifications', function (Request $request) {
     return $request->user()->notifications;
 });
+
+Route::post('/send-role-request', [NotificationController::class, 'sendRoleRequestNotification']);
+
 
 
 //places

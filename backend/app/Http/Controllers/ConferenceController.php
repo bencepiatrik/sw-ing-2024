@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Conference;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ConferenceController extends Controller
 {
@@ -21,7 +22,7 @@ class ConferenceController extends Controller
     public function show($department_id): JsonResponse
     {
         // Hľadanie všetkých konferencií podľa department_id
-        $conferences = Conference::where('department_id', $departmentId)
+        $conferences = Conference::where('department_id', $department_id)
         ->with('department') // Načítaj aj priradené oddelenie
         ->get();
 
@@ -59,15 +60,27 @@ class ConferenceController extends Controller
     public function update(Request $request, $id)
     {
         $conference = Conference::find($id);
-    
+
         if (!$conference) {
             return response()->json(['error' => 'Conference not found'], 404);
         }
-    
+
         $conference->update($request->all());
-    
+
         return response()->json(['message' => 'Conference updated successfully']);
     }
-    
+
+    public function checkUserTasks(Request $request, $conferenceId)
+    {
+        $user = auth()->user();
+        $task = DB::table('task_user')
+            ->join('roles', 'task_user.role_id', '=', 'roles.id')
+            ->where('task_user.user_id', $user->id)
+            ->where('task_user.conference_id', $conferenceId)
+            ->select('roles.name as role_name')
+            ->first();
+
+        return response()->json(['role' => $task ? $task->role_name : null]);
+    }
 
 }

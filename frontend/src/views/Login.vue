@@ -87,7 +87,8 @@ export default {
       try {
         await authStore.login(email.value, password.value);
         errorMessage.value = "";
-        router.push("/main");
+        if (!authStore.isAdmin) router.push("/main");
+        if (authStore.isAdmin) router.push("/admin");
       } catch (error) {
         console.log(error);
         errorMessage.value =

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PublicationSeeder::class,
             NotificationSeeder::class,
             DepartmentUserSeeder::class,
+            TaskUserSeeder::class,
         ]);
     }
 }

@@ -25,8 +25,8 @@ export interface Conference {
     created_at: string;
     updated_at: string;
   }>;
+  role?: string | null;
 }
-
 
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
@@ -79,6 +79,33 @@ const fetchCategories = async () => {
     console.error('Error fetching categories:', error);
   }
 };
+
+const checkTask = async (conference: any) => {
+  try {
+    const response = await axiosInstance.get(`/api/conference-tasks/${conference.id}`);
+    conference.role = response.data.role;
+    //return role;
+
+  } catch (error) {
+    console.error('Error checking tasks:', error);
+    return null;
+
+  }
+}
+
+const sendRoleRequest = async (type:string, conferenceId:number) => {
+  try {
+    const response = await axiosInstance.post('/api/send-role-request', {
+      type: type,
+      conference_id: conferenceId,
+    });
+    alert(response.data.message);
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    alert('Failed to send notification.');
+  }
+}
+
 
 const publications = ref({});
 
@@ -134,7 +161,7 @@ const processedConferences = computed(() => {
       conf.name.toLowerCase().includes(search.value.toLowerCase())
     );
   }
-  
+
   // Krok 2: Zoradenie
   switch (sortOrder.value) {
     case 'A -> Z (Title)':
@@ -280,7 +307,7 @@ onMounted(async () => {
                 :key="conference.id"
                 class="my-2"
               >
-                <v-expansion-panel-title style="background-color: #e9efff">
+                <v-expansion-panel-title style="background-color: #e9efff"     @click="checkTask(conference)">
                   <v-row no-gutters>
                     <v-col class="d-flex justify-center" cols="3" style="font-weight: bold">
                       {{ conference.department?.name }}
@@ -301,13 +328,36 @@ onMounted(async () => {
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <v-row justify="start" no-gutters>
-                    <v-col class="d-flex justify-center align-center" cols="2">
-                      <v-btn
-                        color="primary"
-                        @click="togglePublications(conference.id)"
-                      >
-                        {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
-                      </v-btn>
+                    <v-col class="d-flex justify-center align-center" cols="20">
+                      <!-- Check role and render buttons accordingly -->
+                      <div v-if="conference.role === 'autor'">
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
+                          Chcem byť Recenzent
+                        </v-btn>
+                        <v-btn color="primary" @click="togglePublications(conference.id)">
+                          {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
+                        </v-btn>
+                        <v-btn color="primary">
+                          Vytvoriť publikáciu
+                        </v-btn>
+                      </div>
+                      <div v-else-if="conference.role === 'recenzent'">
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                          Chcem byť Autor
+                        </v-btn>
+                        <v-btn color="primary" @click="togglePublications(conference.id)">
+                          {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
+                        </v-btn>
+                      </div>
+                      <div v-else>
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                          Chcem byť Autor
+                        </v-btn>
+                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
+                          Chcem byť Recenzent
+                        </v-btn>
+                      </div>
+
                     </v-col>
                   </v-row>
                   <v-row v-if="publications[conference.id]" no-gutters class="mt-4">
