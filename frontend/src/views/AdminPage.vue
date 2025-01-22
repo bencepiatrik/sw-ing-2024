@@ -78,46 +78,58 @@
         </v-navigation-drawer>
 
         <!-- Main Content -->
-        <v-container v-if="showNotifications" style="width: 80vw;">
-          <v-card elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
-            <v-card-title class="headline text-center">Notifikácie</v-card-title>
-            <v-data-table :headers="notificationHeaders" :items="notifications" class="elevation-1">
-              <template v-slot:item="{ item }">
-                <tr>
-                  <td>{{ item.type }}</td>
-                  <td>{{ item.user_email }}</td>
-                  <div           v-if="item.university !== 'N/A' && item.faculty !== 'N/A' && item.department !== 'N/A'">
-                    <td>{{ item.university }}</td>
-                    <td>{{ item.faculty }}</td>
-                    <td>{{ item.department }}</td>
+        <v-card v-if="showNotifications" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
+          <v-card-title class="headline text-center">Notifikácie</v-card-title>
+          <div class="table-responsive">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead style="background-color: #f5f5f5;">
+              <tr>
+                <th style="padding: 10px; border: 1px solid #ddd;">Typ</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Email</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Informácia</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Stav</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Vytvorené</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Akcie</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="item in notifications" :key="item.id" style=" border: 1px solid #ddd;">
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.type }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.user_email }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                  <div v-if="item.university !== 'N/A' && item.faculty !== 'N/A' && item.department !== 'N/A'">
+                    <div>{{ item.university }}</div>
+                    <div>{{ item.faculty }}</div>
+                    <div>{{ item.department }}</div>
                   </div>
                   <div v-else-if="item.conference !== 'N/A'">
-                    <td>{{ item.conference }}</td>
-
+                    <div>{{ item.conference }}</div>
                   </div>
-
-                  <td v-else>
-                    No relevant data
-                  </td>
-                  <td>{{ item.state }}</td>
-                  <td>{{ new Date(item.created_at).toLocaleString() }}</td>
-                  <td class="text-center">
-                    <div class="d-flex justify-center">
-                      <v-btn color="green" dark class="mx-2" v-if="item.state === 'sent'"
-                        @click="updateNotificationState(item, 'accepted')">
-                        Akceptovať
-                      </v-btn>
-                      <v-btn color="red" dark class="mx-2" v-if="item.state === 'sent'"
-                        @click="updateNotificationState(item, 'declined')">
-                        Zrušiť
-                      </v-btn>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-container>
+                  <div v-else>
+                    <div>No relevant data</div>
+                  </div>
+                </td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.state }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                  {{ new Date(item.created_at).toLocaleString() }}
+                </td>
+                <td style="padding: 10px; border: 1px solid #ddd;" class="text-center">
+                  <div class="d-flex justify-center">
+                    <v-btn color="green" dark class="mx-2" v-if="item.state === 'sent'"
+                           @click="updateNotificationState(item, 'accepted')">
+                      Akceptovať
+                    </v-btn>
+                    <v-btn color="red" dark class="mx-2" v-if="item.state === 'sent'"
+                           @click="updateNotificationState(item, 'declined')">
+                      Zrušiť
+                    </v-btn>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </v-card>
 
         <!-- Conference Table -->
         <v-card v-if="showConferences" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
@@ -125,37 +137,64 @@
           <v-btn color="primary" class="mb-4" @click="CreateConference">
             Pridať konferenciu
           </v-btn>
-          <v-data-table :headers="headers" :items="conferences" class="elevation-1">
-            <template v-slot:item="{ item }">
-              <tr @click="goToConference(item.id)" style="cursor: pointer;">
-                <td>{{ item.name }}</td>
-                <td>{{ item.year }}</td>
-                <td>{{ item.type }}</td>
+          <div class="table-responsive">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead style="background-color: #f5f5f5;">
+              <tr>
+                <th style="padding: 10px; border: 1px solid #ddd;">Názov</th> <!-- Név -->
+                <th style="padding: 10px; border: 1px solid #ddd;">Rok</th>   <!-- Év -->
+                <th style="padding: 10px; border: 1px solid #ddd;">Typ</th>   <!-- Típus -->
               </tr>
-            </template>
-          </v-data-table>
+              </thead>
+              <tbody>
+              <tr
+                v-for="item in conferences"
+                :key="item.id"
+                @click="goToConference(item.id)"
+                style="cursor: pointer; border: 1px solid #ddd;"
+              >
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.name }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.year }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.type }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </v-card>
         <!-- User Table -->
         <v-card v-if="showUsersTable" elevation="2" class="pa-4" style="border-radius: 10px; width: 60vw;">
           <v-card-title class="headline text-center">Správa používateľov</v-card-title>
-          <v-data-table :headers="headers" :items="users" class="elevation-1">
-            <template v-slot:item="{ item }">
+          <div class="table-responsive">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead style="background-color: #f5f5f5;">
               <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.email }}</td>
-                <td>{{ item.role }}</td>
-                <td class="d-flex justify-end">
-                  <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
-                    Zmena roly
-                  </v-btn>
-                  <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
-                    Vymazať
-                  </v-btn>
+                <th style="padding: 10px; border: 1px solid #ddd;">Názov</th> <!-- Név -->
+                <th style="padding: 10px; border: 1px solid #ddd;">Email</th> <!-- Email -->
+                <th style="padding: 10px; border: 1px solid #ddd;">Rola</th> <!-- Rola -->
+                <th style="padding: 10px; border: 1px solid #ddd;">Akcie</th> <!-- Akciók -->
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="item in users" :key="item.id" style="border: 1px solid #ddd;">
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.name }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.email }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.role }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;" class="text-center">
+                  <div class="d-flex justify-center">
+                    <v-btn color="primary" class="mx-2" @click="openChangeRoleDialog(item)">
+                      Zmena roly
+                    </v-btn>
+                    <v-btn color="red" dark class="mx-2" @click="deleteUser(item)">
+                      Vymazať
+                    </v-btn>
+                  </div>
                 </td>
               </tr>
-            </template>
-          </v-data-table>
+              </tbody>
+            </table>
+          </div>
         </v-card>
+
       </v-container>
     </v-main>
 

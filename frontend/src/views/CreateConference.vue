@@ -203,7 +203,7 @@ const createConference = async () => {
 
     await axiosInstance.post("/api/conferences", payload);
     alert("Konferencia bola úspešne vytvorená!");
-    router.push("/main");
+    router.push("/admin");
   } catch (error) {
     console.error("Error creating conference:", error);
     alert("Nepodarilo sa vytvoriť konferenciu. Skúste znova.");

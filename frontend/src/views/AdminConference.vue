@@ -11,15 +11,12 @@
 
           <!-- Title Section -->
           <v-col cols="8" class="d-flex justify-center align-center">
-            <v-toolbar-title class="text-h6">Admin Panel</v-toolbar-title>
+            <v-toolbar-title class="text-h6">ADMIN PANEL</v-toolbar-title>
           </v-col>
 
           <!-- Buttons Section -->
           <v-col cols="3" class="d-flex justify-end align-center">
-            <v-btn href="/main">Domov</v-btn>
-            <v-btn href="/profile">Profil</v-btn>
-            <v-btn href="/">Landing</v-btn>
-            <v-btn @click="handleLogout">Odhlasit sa</v-btn>
+            <v-btn @click="handleLogout">ODHLÁSIŤ SA</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -49,27 +46,33 @@
           <v-btn color="primary" class="mb-4" @click="EditConference">
           Editovať konferenciu
         </v-btn>
-          <h2>Publikácie:</h2>
-          <v-data-table :items="publications" class="elevation-1">
-            <template v-slot:headers>
+          <v-card-title class="headline text-center">Publikácie</v-card-title>
+          <div class="table-responsive">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead style="background-color: #f5f5f5;">
               <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>State</th>
-                <th>Created Date</th>
-                <th>Updated Date</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">ID</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Názov</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Stav</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Dátum vytvorenia</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Dátum aktualizácie</th>
               </tr>
-            </template>
-            <template v-slot:item="{ item }">
-              <tr @click="goToPublication(item.id)" style="cursor: pointer;">
-                <td>{{ item.id }}</td>
-                <td>{{ item.title }}</td>
-                <td>{{ item.state }}</td>
-                <td>{{ formatDateTime(item.created_at).date+" "+formatDateTime(item.created_at).time }}</td>
-                <td>{{ formatDateTime(item.updated_at).date+" "+formatDateTime(item.updated_at).time }}</td>
+              </thead>
+              <tbody>
+              <tr v-for="item in publications" :key="item.id" @click="goToPublication(item.id)" style="cursor: pointer; border: 1px solid #ddd;">
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.id }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.title }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.state }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                  {{ formatDateTime(item.created_at).date+" "+formatDateTime(item.created_at).time }}
+                </td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                  {{ formatDateTime(item.updated_at).date+" "+formatDateTime(item.updated_at).time }}
+                </td>
               </tr>
-            </template>
-          </v-data-table>
+              </tbody>
+            </table>
+          </div>
         </v-card>
       </v-container>
     </v-main>
