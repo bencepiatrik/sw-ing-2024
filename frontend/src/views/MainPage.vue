@@ -696,7 +696,7 @@ onMounted(async () => {
                             <p>{{ publication.status }}</p>
                           </v-col>
                           <v-col
-                            v-if="publication.status === 'vytvorená' || publication.status === 'odovzdaná' && conference.role === 'autor'"
+                            v-if="conference.role === 'autor'"
                             class="mt-2"
                             cols="4"
                           >
@@ -1091,7 +1091,7 @@ onMounted(async () => {
                           <v-col cols="2">
                             <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
                             <v-btn
-                              v-if="user && publication.user_id === user.id && publication.status !== 'odovzdaná'"
+                              v-if="user && publication.user_id === user.id && publication.status !== 'odovzdaná' && publication.status !== 'odmietnutá'"
                               color="primary"
                               @click="editPublication(publication.id)"
                             >
