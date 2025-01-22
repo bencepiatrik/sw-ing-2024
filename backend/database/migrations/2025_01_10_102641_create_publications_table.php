@@ -17,11 +17,8 @@ class CreatePublicationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('conference_id');
             $table->string('title');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->text('abstract');
-            $table->text('key_words');
-            $table->enum('status', ['prijata', 'prijata s podmienkou', 'vratena na doplnenie', 'odmietnuta', 'odovzdana', 'vytvorena' ])->default('vytvorena');
-            $table->json('files')->nullable();
+            $table->string('state');
+            $table->text('content');
             $table->timestamps();
 
             // Foreign key constraint

@@ -9,12 +9,7 @@ use App\Models\University;
 
 class FacultiesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         $faculties = [
             'Univerzita Konštantína Filozofa v Nitre' => [
@@ -47,12 +42,18 @@ class FacultiesSeeder extends Seeder
 
             if ($university) {
                 foreach ($facultyList as $facultyName) {
-                    DB::table('faculties')->insert([
-                        'uni_id' => $university->id,
-                        'name' => $facultyName,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    ]);
+                    // Skontrolujeme, či fakulta už existuje
+                    if (!DB::table('faculties')
+                        ->where('name', $facultyName)
+                        ->where('uni_id', $university->id)
+                        ->exists()) {
+                        DB::table('faculties')->insert([
+                            'uni_id' => $university->id,
+                            'name' => $facultyName,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                    }
                 }
             }
         }
