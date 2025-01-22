@@ -31,4 +31,31 @@ class PublicationController extends Controller
 
         return response()->json($publication);
     }
+
+    public function store(Request $request)
+    {
+        // Validate the input
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'abstract' => 'required|string',
+            'keywords' => 'required|string',
+            'conference_id' => 'required|integer|exists:conferences,id',
+        ]);
+
+        // Create the publication
+        $publication = Publication::create([
+            'title' => $request->title,
+            'abstract' => $request->abstract,
+            'keywords' => $request->keywords,
+            'conference_id' => $request->conference_id,
+            'user_id' => auth()->id(),
+        ]);
+
+        // Return a JSON response
+        return response()->json([
+            'message' => 'Publication created successfully.',
+            'publication' => $publication,
+        ], 201);
+    }
+
 }

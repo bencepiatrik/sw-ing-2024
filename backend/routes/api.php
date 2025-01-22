@@ -110,4 +110,7 @@ Route::post('/submit-workplace', [WorkplaceController::class, 'submitWorkplace']
 
 Route::get('/publications', [PublicationController::class, 'index']);
 
+Route::post('/publications', [PublicationController::class, 'store']);
+
+
 Route::get('/publication/{id}', [PublicationController::class, 'show']);

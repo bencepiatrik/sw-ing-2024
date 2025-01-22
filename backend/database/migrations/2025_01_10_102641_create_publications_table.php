@@ -15,13 +15,16 @@ class CreatePublicationsTable extends Migration
     {
         Schema::create('publications', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('conference_id');
             $table->string('title');
-            $table->string('state');
-            $table->text('content');
+            $table->text('abstract');
+            $table->text('keywords');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('conference_id');
+            $table->json('files')->nullable();
+            $table->enum('status', ['prijatá', 'odmietnutá', 'odovzdaná', 'vytvorená'])->default('vytvorená');
             $table->timestamps();
 
-            // Foreign key constraint
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('conference_id')->references('id')->on('conferences')->onDelete('cascade');
         });
     }

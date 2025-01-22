@@ -12,70 +12,64 @@ class PublicationSeeder extends Seeder
     {
         $publications = [
             [
+                'title' => 'Analysis of IT Trends',
+                'abstract' => 'This paper analyzes current trends in the field of information technology.',
+                'keywords' => 'IT, trends, analysis',
+                'user_id' => 1,
                 'conference_id' => 1,
-                'title' => 'Analýza trendov v IT sektore',
-                'state' => 'Prijatá',
-                'content' => 'Táto práca analyzuje aktuálne trendy v oblasti informačných technológií...',
+                'files' => null,
+                'status' => 'prijatá',
             ],
             [
+                'title' => 'Development of Cloud Services',
+                'abstract' => 'The paper discusses the development and optimization of cloud technologies.',
+                'keywords' => 'cloud, optimization, technology',
+                'user_id' => 2,
                 'conference_id' => 1,
-                'title' => 'Vývoj cloudových služieb',
-                'state' => 'Prijatá',
-                'content' => 'Práca sa zaoberá vývojom a optimalizáciou cloudových technológií...',
+                'files' => null,
+                'status' => 'odovzdaná',
             ],
             [
+                'title' => 'Blockchain Technology Applications',
+                'abstract' => 'A study of blockchain applications beyond the financial sector.',
+                'keywords' => 'blockchain, technology, application',
+                'user_id' => 3,
                 'conference_id' => 2,
-                'title' => 'Aplikácia blockchain technológie',
-                'state' => 'Prezentovaná',
-                'content' => 'Štúdia sa venuje možnostiam aplikácie blockchainu mimo finančného sektora...',
+                'files' => null,
+                'status' => 'vytvorená',
             ],
             [
+                'title' => 'Robotics and Artificial Intelligence',
+                'abstract' => 'This paper analyzes new trends in robotics and AI.',
+                'keywords' => 'robotics, AI, trends',
+                'user_id' => 4,
                 'conference_id' => 2,
-                'title' => 'Robotika a umelá inteligencia',
-                'state' => 'Prezentovaná',
-                'content' => 'Práca analyzuje nové trendy v oblasti robotiky a AI...',
+                'files' => null,
+                'status' => 'prijatá',
             ],
             [
+                'title' => 'Machine Learning in Practice',
+                'abstract' => 'This paper discusses practical applications of machine learning in industry.',
+                'keywords' => 'machine learning, industry, applications',
+                'user_id' => 3,
                 'conference_id' => 3,
-                'title' => 'Strojové učenie v praxi',
-                'state' => 'Prijatá',
-                'content' => 'Práca sa zaoberá praktickými aplikáciami strojového učenia v priemysle...',
-            ],
-            [
-                'conference_id' => 3,
-                'title' => 'Analýza veľkých dát',
-                'state' => 'Prijatá',
-                'content' => 'Táto práca skúma prístupy k analýze big data...',
-            ],
-            [
-                'conference_id' => 3,
-                'title' => 'Predikčné modely v Data Science',
-                'state' => 'Prijatá',
-                'content' => 'Práca sa zameriava na použitie predikčných modelov v oblasti Data Science...',
-            ],
-            [
-                'conference_id' => 4,
-                'title' => 'Prístupy k ochrane údajov',
-                'state' => 'Prijatá',
-                'content' => 'Práca analyzuje moderné metódy ochrany údajov v kyberpriestore...',
+                'files' => null,
+                'status' => 'odmietnutá',
             ],
         ];
 
         foreach ($publications as $publication) {
-            // Skontrolujeme, či publikácia už existuje
-            if (!DB::table('publications')
-                ->where('conference_id', $publication['conference_id'])
-                ->where('title', $publication['title'])
-                ->exists()) {
-                DB::table('publications')->insert([
-                    'conference_id' => $publication['conference_id'],
-                    'title' => $publication['title'],
-                    'state' => $publication['state'],
-                    'content' => $publication['content'],
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
-            }
+            DB::table('publications')->insert([
+                'title' => $publication['title'],
+                'abstract' => $publication['abstract'],
+                'keywords' => $publication['keywords'],
+                'user_id' => $publication['user_id'],
+                'conference_id' => $publication['conference_id'],
+                'files' => $publication['files'],
+                'status' => $publication['status'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
         }
     }
 }

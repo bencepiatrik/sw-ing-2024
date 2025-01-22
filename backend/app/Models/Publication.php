@@ -10,16 +10,25 @@ class Publication extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'publications';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $table = 'publications'; // Názov tabuľky
     protected $fillable = [
         'conference_id',
         'title',
-        'state',
-        'content',
+        'abstract',
+        'keywords',
+        'user_id',
+        'files',
+        'status',
     ];
 
     /**
@@ -28,5 +37,13 @@ class Publication extends Model
     public function conference()
     {
         return $this->belongsTo(Conference::class, 'conference_id');
+    }
+
+    /**
+     * Get the user (author) of this publication.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
