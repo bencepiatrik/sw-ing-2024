@@ -28,6 +28,31 @@ export interface Conference {
   role?: string | null;
 }
 
+interface Review {
+    authorName: string;
+    reviewerName: string;
+    time: string;
+    aktualnost: string;
+    zorientovanie: string;
+    vhodnostMetod: string;
+    rozsahUroven: string;
+    analyzaInterpretacia: string;
+    prehladnostLogika: string;
+    formalnaJazykova: string;
+    missingTitle: boolean;
+    missingAuthorName: boolean;
+    missingEmail: boolean;
+    missingAbstract: boolean;
+    invalidAbstractLength: boolean;
+    missingKeywords: boolean;
+    missingSections: boolean;
+    missingReferences: boolean;
+    missingTextReferences: boolean;
+    missingImageReferences: boolean;
+    missingImageDescriptions: boolean;
+    strongPoints: string;
+    weakPoints: string;
+}
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
 import {reactive} from "@vue/runtime-dom";
@@ -190,7 +215,32 @@ async function submitForm(conferenceId) {
 }
 const isViewReviewModalOpen = ref(false);
 //funguje len s reactive deklaraciou
-const currentReview = reactive({});
+const currentReview = reactive<Review>({
+    authorName: '',
+    reviewerName: '',
+    time: '',
+    aktualnost: '',
+    zorientovanie: '',
+    vhodnostMetod: '',
+    rozsahUroven: '',
+    analyzaInterpretacia: '',
+    prehladnostLogika: '',
+    formalnaJazykova: '',
+    missingTitle: false,
+    missingAuthorName: false,
+    missingEmail: false,
+    missingAbstract: false,
+    invalidAbstractLength: false,
+    missingKeywords: false,
+    missingSections: false,
+    missingReferences: false,
+    missingTextReferences: false,
+    missingImageReferences: false,
+    missingImageDescriptions: false,
+    strongPoints: '',
+    weakPoints: '',
+});
+
 async function viewReview(publicationId) {
   try {
     if (!publicationId) {

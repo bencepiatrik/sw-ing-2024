@@ -44,8 +44,11 @@ class ReviewController extends Controller
     {
         $review = Review::with(['author', 'reviewer'])->where('publication_id', $publicationId)->firstOrFail();
 
-        $review->review_data = json_decode($review->review_data);
-
+        if (is_string($review->review_data)) {
+            $review->review_data = json_decode($review->review_data); // Dekódovanie JSON
+        } else {
+            $review->review_data;
+        }
         return response()->json($review);
     }
 
