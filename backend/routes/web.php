@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+require __DIR__.'/auth.php';
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,5 +25,8 @@ Route::get('/main', function () {
     return response()->json(['message' => 'Welcome to the main page.']);
 })->middleware(['auth']);
 
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-require __DIR__.'/auth.php';
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+

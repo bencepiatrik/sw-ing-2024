@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-</script>
 
+</script>
 <template>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
   <div id="app">
     <router-view />
   </div>
+  <link
+    href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"
+    rel="stylesheet"
+  />
 </template>
+
+<style>
+body{
+  background-color: #D9DCD6;
+}
+</style>

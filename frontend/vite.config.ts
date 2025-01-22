@@ -11,11 +11,19 @@ export default defineConfig({
       autoImport: true,
     }),
   ],
+  envPrefix: 'VITE_',
   server: {
     host: true,
     port: 3000,
     watch: {
       usePolling: true,
+    },
+    proxy: {
+      "/storage": {
+        target: process.env.VITE_BACKEND_URL,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/storage/, "/storage"),
+      },
     },
     strictPort: true,
   },

@@ -5,21 +5,13 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </div>
 
-    <!-- Logo -->
-    <v-img
-      :width="314"
-      aspect-ratio="16/9"
-      cover
-      src="@/assets/logo.png"
-    ></v-img>
-
     <!-- Login Form -->
     <v-container
-      class="d-flex justify-center align-center"
-      style="height: 70vh;"
-      :class="{ 'blur-background': isLoading }"
-    >
-      <v-card elevation="5" class="pa-5" width="400">
+  class="d-flex justify-center align-center"
+  style="height: 100vh; margin-top: -200px;"
+  :class="{ 'blur-background': isLoading }">
+  <v-card elevation="5" class="pa-5" width="400">
+    <v-img :width="300" aspect-ratio="16/9" cover src="/logoOriginal.jpg"class="mx-auto" style="border-radius: 5px;"/> <br>
         <v-form @submit.prevent="handleLogin">
           <v-text-field
             v-model="email"
@@ -40,22 +32,22 @@
             :disabled="isLoading"
           ></v-text-field>
           <v-btn
-            color="primary"
+            color="#4A7891"
             block
             large
             type="submit"
             class="mb-3"
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-login" />
             Prihlasovanie
           </v-btn>
           <v-btn
-            color="secondary"
+            color="#2D627F"
             block
             outlined
             @click="goToRegister"
             :disabled="isLoading"
-          >
+          > <v-icon icon="mdi-account-plus" />
             Registrácia
           </v-btn>
         </v-form>
@@ -95,7 +87,8 @@ export default {
       try {
         await authStore.login(email.value, password.value);
         errorMessage.value = "";
-        router.push("/main");
+        if (!authStore.isAdmin) router.push("/main");
+        if (authStore.isAdmin) router.push("/admin");
       } catch (error) {
         console.log(error);
         errorMessage.value =
@@ -131,9 +124,6 @@ export default {
   z-index: 9999;
 }
 
-.body {
-  background-color: #007bff;
-}
 
 .blur-background {
   filter: blur(5px);
