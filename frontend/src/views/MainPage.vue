@@ -47,6 +47,8 @@ const selectedState = ref<string[]>([]);
 const selectedYears = ref<number[]>([]);
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
 
+const showReviewForm = ref(false);
+let currentPublicationId = null;
 const showForm = ref(false);
 const formValid = ref(false);
 const form = ref({
@@ -54,13 +56,65 @@ const form = ref({
   abstrakt: '',
   klucoveSlova: '',
 });
+const reviewForm = ref({
+  aktualnost: null,
+  zorientovanie: null,
+  vhodnostMetod: null,
+  rozsahUroven: null,
+  analyzaInterpretacia: null,
+  prehladnostLogika: null,
+  formalnaJazykova: null,
+  missingTitle: false,
+  missingAuthorName: false,
+  missingEmail: false,
+  missingAbstract: false,
+  invalidAbstractLength: false,
+  missingKeywords: false,
+  missingSections: false,
+  missingReferences: false,
+  missingTextReferences: false,
+  missingImageReferences: false,
+  missingImageDescriptions: false,
+  strongPoints: '',
+  weakPoints: '',
+  status: '',
+});
 
-const rules = {
-  required: (value) => !!value || 'Toto pole je povinné.',
-};
+function openReviewForm(publicationId) {
+  currentPublicationId = publicationId;
+  showReviewForm.value = true;
+}
 
-function openForm() {
-  showForm.value = true;
+// Closes the review modal
+function closeReviewForm() {
+  showReviewForm.value = false;
+  resetReviewForm();
+}
+
+function resetReviewForm() {
+  reviewForm.value.aktualnost = null;
+  reviewForm.value.zorientovanie = null;
+  reviewForm.value.vhodnostMetod = null;
+  reviewForm.value.rozsahUroven = null;
+  reviewForm.value.analyzaInterpretacia = null;
+  reviewForm.value.prehladnostLogika = null;
+  reviewForm.value.formalnaJazykova = null;
+  // Resetting new true/false fields
+  reviewForm.value.missingTitle = false;
+  reviewForm.value.missingAuthorName = false;
+  reviewForm.value.missingEmail = false;
+  reviewForm.value.missingAbstract = false;
+  reviewForm.value.invalidAbstractLength = false;
+  reviewForm.value.missingKeywords = false;
+  reviewForm.value.missingSections = false;
+  reviewForm.value.missingReferences = false;
+  reviewForm.value.missingTextReferences = false;
+  reviewForm.value.missingImageReferences = false;
+  reviewForm.value.missingImageDescriptions = false;
+  // Reset new fields
+  reviewForm.value.strongPoints = '';
+  reviewForm.value.weakPoints = '';
+  reviewForm.value.status = '';
 }
 
 function resetForm() {
@@ -68,6 +122,55 @@ function resetForm() {
   form.value.abstrakt = '';
   form.value.klucoveSlova = '';
   showForm.value = false;
+}
+
+async function submitReview() {
+  try {
+    const reviewData = {
+      publicationId: currentPublicationId,
+      reviewData: {
+        aktualnost: reviewForm.value.aktualnost,
+        zorientovanie: reviewForm.value.zorientovanie,
+        vhodnostMetod: reviewForm.value.vhodnostMetod,
+        rozsahUroven: reviewForm.value.rozsahUroven,
+        analyzaInterpretacia: reviewForm.value.analyzaInterpretacia,
+        prehladnostLogika: reviewForm.value.prehladnostLogika,
+        formalnaJazykova: reviewForm.value.formalnaJazykova,
+        // Adding new true/false fields
+        missingTitle: reviewForm.value.missingTitle,
+        missingAuthorName: reviewForm.value.missingAuthorName,
+        missingEmail: reviewForm.value.missingEmail,
+        missingAbstract: reviewForm.value.missingAbstract,
+        invalidAbstractLength: reviewForm.value.invalidAbstractLength,
+        missingKeywords: reviewForm.value.missingKeywords,
+        missingSections: reviewForm.value.missingSections,
+        missingReferences: reviewForm.value.missingReferences,
+        missingTextReferences: reviewForm.value.missingTextReferences,
+        missingImageReferences: reviewForm.value.missingImageReferences,
+        missingImageDescriptions: reviewForm.value.missingImageDescriptions,
+        // Add new fields
+        strongPoints: reviewForm.value.strongPoints,
+        weakPoints: reviewForm.value.weakPoints,
+      },
+      status: reviewForm.value.status,
+    };
+
+    const response = await axiosInstance.post('/api/reviews', reviewData);
+    console.log('Review submitted successfully:', response.data);
+
+    resetReviewForm();
+    closeReviewForm();
+  } catch (error) {
+    console.error('Error submitting review:', error);
+  }
+}
+
+const rules = {
+  required: (value) => !!value || 'Toto pole je povinné.',
+};
+
+function openForm() {
+  showForm.value = true;
 }
 
 async function submitForm(conferenceId) {
@@ -386,7 +489,7 @@ onMounted(async () => {
                           </v-btn>
 
                           <!-- Dialog pre formulár -->
-                          <v-dialog v-model="showForm" persistent max-width="500px">
+                          <v-dialog v-model="showForm" persistent max-width="50vw">
                             <v-card>
                               <v-card-title class="text-h5">Vytvorenie Publikácie</v-card-title>
                               <v-card-text>
@@ -448,16 +551,261 @@ onMounted(async () => {
 
                     </v-col>
                   </v-row>
-                  <v-row v-if="publications[conference.id]" no-gutters class="mt-4">
+                  <v-row v-if="publications[conference.id]" class="mt-4" no-gutters>
                     <v-col
                       v-for="publication in publications[conference.id]"
                       :key="publication.id"
-                      class="mb-2"
                       cols="12"
                     >
                       <v-card class="pa-3" elevation="1">
-                        <strong>{{ publication.title }}</strong>
-                        <p>{{ publication.status }}</p>
+                        <v-row align="center" no-gutters>
+                          <v-col cols="4">
+                            <strong>{{ publication.title }}</strong>
+                          </v-col>
+                          <v-col cols="2" class="text-right">
+                            <p>{{ publication.status }}</p>
+                          </v-col>
+                          <v-col v-if="publication.status === 'odovzdaná'" class="mt-2" cols="6">
+                            <v-btn color="primary" @click="openReviewForm(publication.id)">
+                              Hodnotiť
+                            </v-btn>
+
+                            <!-- Review Form Modal -->
+                            <v-dialog v-model="showReviewForm" persistent max-width="50vw">
+                              <v-card>
+                                <v-card-title class="headline">Hodnotiť Publikáciu</v-card-title>
+                                <v-card-text>
+                                  <!-- Aktualnosť -->
+                                  <v-select
+                                    v-model="reviewForm.aktualnost"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Aktuálnosť a náročnosť práce"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.zorientovanie"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Zorientovanie sa študenta v danej problematike predovšetkým analýzou domácej a zahraničnej literatúry"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.vhodnostMetod"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Vhodnosť zvolených metód spracovania riešenej problematiky"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.rozsahUroven"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Rozsah a úroveň dosiahnutých výsledkov"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.analyzaInterpretacia"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Analýza a interpretácia výsledkov a formulácia záverov práce"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.prehladnostLogika"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Prehľadnosť a logická štruktúra práce"
+                                    required
+                                  ></v-select>
+
+                                  <v-select
+                                    v-model="reviewForm.formalnaJazykova"
+                                    :items="['A', 'B', 'C', 'D', 'E', 'Fx']"
+                                    label="Formálna, jazyková a stylistická úroveň práce"
+                                    required
+                                  ></v-select>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingTitle"
+                                    label="Chýba názov práce v slovenskom alebo anglickom jazyku"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingTitle" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingAuthorName"
+                                    label="Chýba meno autora alebo školiteľa"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingAuthorName" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingEmail"
+                                    label="Chýba pracovná emailová adresa autora alebo školiteľa"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingEmail" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingAbstract"
+                                    label="Chýba abstrakt v slovenskom alebo anglickom jazyku"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingAbstract" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.invalidAbstractLength"
+                                    label="Abstrakt nespĺňa rozsah 100 - 150 slov"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.invalidAbstractLength" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingKeywords"
+                                    label="Chýbajú kľúčové slová v slovenskom alebo anglickom jazyku"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingKeywords" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingSections"
+                                    label="Chýba 'Úvod', 'Výsledky a diskusia' alebo 'Záver'"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingSections" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingReferences"
+                                    label="Nie sú uvedené zdroje a použitá literatúra"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingReferences" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingTextReferences"
+                                    label="V texte chýbajú referencie na zoznam bibliografie"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingTextReferences" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingImageReferences"
+                                    label="V texte chýbajú referencie na použité obrázky a/alebo tabuľky"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingImageReferences" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-switch
+                                    v-model="reviewForm.missingImageDescriptions"
+                                    label="Obrázkom a/alebo tabuľkám chýba popis"
+                                    :false-value="false"
+                                    :true-value="true"
+                                    class="d-flex align-center"
+                                  >
+                                    <template #thumb>
+                                      <span v-if="reviewForm.missingImageDescriptions" style="color: green;">✓</span>
+                                      <span v-else style="color: red;">✗</span>
+                                    </template>
+                                  </v-switch>
+
+                                  <v-textarea
+                                    v-model="reviewForm.strongPoints"
+                                    label="Prínos (silné stránky) práce"
+                                    rows="4"
+                                    outlined
+                                    :rules="[v => !!v || 'Napíšte sem silné stránky']"
+                                  ></v-textarea>
+
+                                  <v-textarea
+                                    v-model="reviewForm.weakPoints"
+                                    label="Nedostatky (slabé stránky) práce"
+                                    rows="4"
+                                    outlined
+                                    :rules="[v => !!v || 'Napíšte sem slabé stránky']"
+                                  ></v-textarea>
+
+                                  <v-select
+                                    v-model="reviewForm.status"
+                                    :items="['prijatá', 'odmietnutá']"
+                                    label="Stav Publikácie"
+                                    required
+                                  ></v-select>
+
+
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-btn color="primary" @click="submitReview">
+                                    Uložiť
+                                  </v-btn>
+                                  <v-btn color="secondary" @click="closeReviewForm">
+                                    Zrušiť
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+
+                          </v-col>
+                        </v-row>
                       </v-card>
                     </v-col>
                   </v-row>
