@@ -532,17 +532,15 @@ onMounted(async () => {
                     <v-col class="d-flex justify-center align-center" cols="20">
                       <!-- Check role and render buttons accordingly -->
                       <div v-if="conference.role === 'autor'">
-                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
+                        <v-btn  class="mr-4" color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
                           Chcem byť Recenzent
                         </v-btn>
-                        <v-btn color="primary" @click="togglePublications(conference.id)">
-                          {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
-                        </v-btn>
-                        <div>
-                          <v-btn color="primary" @click="openForm">
+                          <v-btn class="mr-4" color="primary" @click="openForm">
                             Vytvoriť publikáciu
                           </v-btn>
-
+                          <v-btn color="primary" @click="togglePublications(conference.id)">
+                            {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
+                          </v-btn>
                           <!-- Dialog pre formulár -->
                           <v-dialog v-model="showForm" persistent max-width="50vw">
                             <v-card>
@@ -585,10 +583,10 @@ onMounted(async () => {
                               </v-card-actions>
                             </v-card>
                           </v-dialog>
-                        </div>
+
                       </div>
                       <div v-else-if="conference.role === 'recenzent'">
-                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                        <v-btn class="mr-4" color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
                           Chcem byť Autor
                         </v-btn>
                         <v-btn color="primary" @click="togglePublications(conference.id)">
@@ -596,7 +594,7 @@ onMounted(async () => {
                         </v-btn>
                       </div>
                       <div v-else>
-                        <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
+                        <v-btn class="mr-4" color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
                           Chcem byť Autor
                         </v-btn>
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Recenzent', conference.id)">
@@ -614,13 +612,25 @@ onMounted(async () => {
                     >
                       <v-card class="pa-3" elevation="1">
                         <v-row align="center" no-gutters>
-                          <v-col cols="4">
+                          <v-col cols="2">
                             <strong>{{ publication.title }}</strong>
                           </v-col>
                           <v-col cols="2" class="text-right">
                             <p>{{ publication.status }}</p>
                           </v-col>
-                          <v-col v-if="publication.status === 'odovzdaná'" class="mt-2" cols="6">
+                          <v-col
+                            v-if="publication.status === 'vytvorená' || publication.status === 'odovzdaná' && conference.role === 'autor'"
+                            class="mt-2"
+                            cols="4"
+                          >
+                            <v-btn
+                              color="primary"
+                              @click="viewReview(publication.id)"
+                            >
+                              Zobraziť Publikáciu
+                            </v-btn>
+                          </v-col>
+                          <v-col v-if="publication.status === 'odovzdaná' && conference.role === 'recenzent'" class="mt-2" cols="6">
                             <v-btn color="primary" @click="openReviewForm(publication.id)">
                               Hodnotiť
                             </v-btn>
@@ -861,9 +871,9 @@ onMounted(async () => {
 
                           </v-col>
                           <v-col
-                            v-if="publication.status === 'prijatá' || publication.status === 'odmietnutá'"
+                            v-if="publication.status === 'prijatá' || publication.status === 'odmietnutá' && conference.role === 'recenzent'"
                             class="mt-2"
-                            cols="6"
+                            cols="4"
                           >
                             <v-btn
                               color="primary"
@@ -980,16 +990,18 @@ onMounted(async () => {
 
 
                           </v-col>
-                        </v-row>
-                      
-                        <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
-                        <v-btn
-                          v-if="user && publication.user_id === user.id"
-                          color="primary"
-                          @click="editPublication(publication.id)"
-                        >
-                          Upraviť
-                        </v-btn>
+                          <v-col cols="2">
+                            <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
+                            <v-btn
+                              v-if="user && publication.user_id === user.id"
+                              color="primary"
+                              @click="editPublication(publication.id)"
+                            >
+                              Upraviť
+                            </v-btn>
+                          </v-col>
+
+                  </v-row>
                       </v-card>
                     </v-col>
                   </v-row>
