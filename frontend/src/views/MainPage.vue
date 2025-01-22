@@ -28,11 +28,14 @@ export interface Conference {
   role?: string | null;
 }
 
+
+
 // Inicializácia routera a authStore
 import { storeToRefs } from 'pinia';
 const router = useRouter();
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
+
 
 const needsWorkplace = computed(() => {
   return !user.value?.departments || user.value.departments.length === 0;
@@ -43,6 +46,46 @@ const selectedDepartments = ref<string[]>([]);
 const selectedState = ref<string[]>([]);
 const selectedYears = ref<number[]>([]);
 const categories = ref<Array<{ id: number; name: string; description: string; type: string }>>([]);
+
+const showForm = ref(false);
+const formValid = ref(false);
+const form = ref({
+  nazov: '',
+  abstrakt: '',
+  klucoveSlova: '',
+});
+
+const rules = {
+  required: (value) => !!value || 'Toto pole je povinné.',
+};
+
+function openForm() {
+  showForm.value = true;
+}
+
+function resetForm() {
+  form.value.nazov = '';
+  form.value.abstrakt = '';
+  form.value.klucoveSlova = '';
+  showForm.value = false;
+}
+
+async function submitForm(conferenceId) {
+  try {
+    const response = await axiosInstance.post('/api/publications', {
+      title: form.value.nazov,
+      abstract: form.value.abstrakt,
+      keywords: form.value.klucoveSlova,
+      conference_id: conferenceId,
+    });
+    console.log('Publikácia vytvorená:', response.data);
+
+    // Reset the form after submission
+    resetForm();
+  } catch (error) {
+    console.error('Chyba pri vytváraní publikácie:', error);
+  }
+}
 
 const fetchConferences = async () => {
   conferences.value = []; // Resetuj konferencie
@@ -337,9 +380,54 @@ onMounted(async () => {
                         <v-btn color="primary" @click="togglePublications(conference.id)">
                           {{ openedConferences[conference.id] ? 'Close' : 'Open' }}
                         </v-btn>
-                        <v-btn color="primary">
-                          Vytvoriť publikáciu
-                        </v-btn>
+                        <div>
+                          <v-btn color="primary" @click="openForm">
+                            Vytvoriť publikáciu
+                          </v-btn>
+
+                          <!-- Dialog pre formulár -->
+                          <v-dialog v-model="showForm" persistent max-width="500px">
+                            <v-card>
+                              <v-card-title class="text-h5">Vytvorenie Publikácie</v-card-title>
+                              <v-card-text>
+                                <v-form ref="publicationForm" v-model="formValid">
+                                  <!-- Názov -->
+                                  <v-text-field
+                                    label="Názov"
+                                    v-model="form.nazov"
+                                    :rules="[rules.required]"
+                                    required
+                                  ></v-text-field>
+
+                                  <!-- Abstrakt -->
+                                  <v-textarea
+                                    label="Abstrakt"
+                                    v-model="form.abstrakt"
+                                    :rules="[rules.required]"
+                                    required
+                                  ></v-textarea>
+
+                                  <!-- Kľúčové slová -->
+                                  <v-textarea
+                                    label="Kľúčové slová"
+                                    v-model="form.klucoveSlova"
+                                    :rules="[rules.required]"
+                                    required
+                                  ></v-textarea>
+                                </v-form>
+                              </v-card-text>
+                              <v-card-actions>
+                                <!-- Confirm and Cancel Buttons -->
+                                <v-btn color="primary" @click="submitForm(conference.id)" :disabled="!formValid">
+                                  Potvrdiť
+                                </v-btn>
+                                <v-btn color="secondary" @click="resetForm">
+                                  Zrušiť
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
+                        </div>
                       </div>
                       <div v-else-if="conference.role === 'recenzent'">
                         <v-btn color="primary" @click="sendRoleRequest('Poziadanie o role Autor', conference.id)">
@@ -369,8 +457,7 @@ onMounted(async () => {
                     >
                       <v-card class="pa-3" elevation="1">
                         <strong>{{ publication.title }}</strong>
-                        <p>{{ publication.state }}</p>
-                        <p>{{ publication.content }}</p>
+                        <p>{{ publication.status }}</p>
                       </v-card>
                     </v-col>
                   </v-row>
