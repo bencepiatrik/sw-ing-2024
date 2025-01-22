@@ -27,6 +27,14 @@ class DepartmentUserSeeder extends Seeder
                 'user_id' => 3,
                 'department_id' => 35,
             ],
+            [
+                'user_id' => 4,
+                'department_id' => 34,
+            ],
+            [
+                'user_id' => 4,
+                'department_id' => 35,
+            ],
         ];
 
         foreach ($departmentUsers as $departmentUser) {

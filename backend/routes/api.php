@@ -5,6 +5,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UniversityController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkplaceController;
@@ -112,5 +113,6 @@ Route::get('/publications', [PublicationController::class, 'index']);
 
 Route::post('/publications', [PublicationController::class, 'store']);
 
+Route::post('/reviews', [ReviewController::class, 'store']);
 
 Route::get('/publication/{id}', [PublicationController::class, 'show']);
