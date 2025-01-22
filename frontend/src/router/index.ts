@@ -13,6 +13,7 @@ import Notifications from '@/views/Notifications.vue'
 import CreateConference from '@/views/CreateConference.vue'
 import AdminConference from '@/views/AdminConference.vue'
 import EditConference from '@/views/EditConference.vue'
+import EditPublication from '@/views/EditPublication.vue'
 
 const routes = [
   {
@@ -90,7 +91,15 @@ const routes = [
     name: 'Notifications',
     component: Notifications,
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/edit-publication/:id',
+    name: 'EditPublication',
+    component: EditPublication,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  
 ]
 
 

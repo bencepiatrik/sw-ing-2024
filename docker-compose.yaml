@@ -89,7 +89,7 @@ services:
         echo 'Running migrations...';
         php artisan migrate --force;
       fi &&
-      if [ $(php artisan db:seed | grep -c 'Database seeding completed') -eq 1 ]; then
+      if [ $(php artisan db:seed | grep -c 'Database seeding completed') -eq 0 ]; then
         echo 'Database already seeded.';
       else
         echo 'Running seeders...';

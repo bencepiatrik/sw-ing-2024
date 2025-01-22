@@ -226,6 +226,10 @@ const openCategoryPage = (categoryId: number) => {
   router.push(`/categories/${categoryId}`);
 };
 
+const editPublication = (publicationId: number) => {
+  router.push(`/edit-publication/${publicationId}`);
+};
+
 // Funkcia pre odhlásenie
 const handleLogout = async () => {
   await authStore.logout(); // Počká na dokončenie logout
@@ -458,6 +462,15 @@ onMounted(async () => {
                       <v-card class="pa-3" elevation="1">
                         <strong>{{ publication.title }}</strong>
                         <p>{{ publication.status }}</p>
+                      
+                        <!-- Tlačidlo pre publikácie aktuálneho používateľa -->
+                        <v-btn
+                          v-if="user && publication.user_id === user.id"
+                          color="primary"
+                          @click="editPublication(publication.id)"
+                        >
+                          Upraviť
+                        </v-btn>
                       </v-card>
                     </v-col>
                   </v-row>
